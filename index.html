@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Metodologia - Psicologia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8FAFC;
+            color: #1E293B;
+        }
+        .card-flip {
+            perspective: 1000px;
+        }
+        .card-inner {
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .card-flip.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        .card-front, .card-back {
+            backface-visibility: hidden;
+        }
+        .card-back {
+            transform: rotateY(180deg);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col bg-slate-50 text-slate-800">
+
+    <!-- Header / Navbar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-2">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-xl shadow-md">
+                    Ψ
+                </div>
+                <div>
+                    <h1 class="font-bold text-base md:text-lg text-slate-800 leading-tight">Revisão de Metodologia</h1>
+                    <p class="text-xs text-slate-500">Psicologia • 8º Período</p>
+                </div>
+            </div>
+
+            <!-- Score display & Navigation -->
+            <div class="flex items-center space-x-2 md:space-x-4">
+                <div class="bg-indigo-50 border border-indigo-100 rounded-lg px-2.5 py-1 flex items-center space-x-1.5">
+                    <span class="text-xs font-semibold text-indigo-700">Pontos:</span>
+                    <span id="score-display" class="font-extrabold text-indigo-900 text-sm">0</span>
+                </div>
+                <div class="bg-emerald-50 border border-emerald-100 rounded-lg px-2.5 py-1 flex items-center space-x-1.5">
+                    <span class="text-xs font-semibold text-emerald-700">Acertos:</span>
+                    <span id="accuracy-display" class="font-extrabold text-emerald-900 text-sm">0/0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mode Selector Tabs -->
+        <div class="max-w-6xl mx-auto px-2 flex space-x-2 md:space-x-4 border-t border-slate-100 text-xs md:text-sm font-semibold overflow-x-auto">
+            <button onclick="switchTab('arcade')" id="tab-arcade" class="py-3 px-2 border-b-2 border-indigo-600 text-indigo-600 flex items-center gap-1.5 whitespace-nowrap">
+                <span>🎮</span> Caça-Conceito Arcade
+            </button>
+            <button onclick="switchTab('quiz')" id="tab-quiz" class="py-3 px-2 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-1.5 whitespace-nowrap">
+                <span>📝</span> Quiz de Casos
+            </button>
+            <button onclick="switchTab('variables')" id="tab-variables" class="py-3 px-2 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-1.5 whitespace-nowrap">
+                <span>🎯</span> Lab de Variáveis
+            </button>
+            <button onclick="switchTab('flashcards')" id="tab-flashcards" class="py-3 px-2 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-1.5 whitespace-nowrap">
+                <span>🎴</span> Flashcards
+            </button>
+            <button onclick="switchTab('cheatsheet')" id="tab-cheatsheet" class="py-3 px-2 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-1.5 whitespace-nowrap">
+                <span>💡</span> Resumo Completo
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-1 max-w-5xl w-full mx-auto p-3 md:p-6">
+
+        <!-- TAB 0: GAME ARCADE MOBILE-FRIENDLY -->
+        <section id="section-arcade" class="space-y-3">
+            <div class="bg-white rounded-2xl p-3 md:p-6 shadow-sm border border-slate-200 text-center relative overflow-hidden">
+                <div class="flex flex-col md:flex-row justify-between items-center mb-3 gap-2">
+                    <div class="text-left w-full md:w-auto">
+                        <h2 class="text-lg md:text-xl font-extrabold text-slate-800 flex items-center gap-2">
+                            ⚡ Caça-Conceito Arcade
+                        </h2>
+                        <p class="text-xs text-slate-500">Colete apenas o conceito pedido no objetivo da missão!</p>
+                    </div>
+                    <div class="flex items-center justify-between w-full md:w-auto gap-2">
+                        <!-- Sound Toggle Button -->
+                        <button onclick="toggleSound()" id="btn-sound" class="bg-slate-100 hover:bg-slate-200 border border-slate-300 px-3 py-1 rounded-xl text-xs font-bold text-slate-700 flex items-center gap-1">
+                            <span id="sound-icon">🔊</span> Som: ON
+                        </button>
+                        <div class="bg-amber-50 border border-amber-200 px-3 py-1 rounded-xl text-xs font-extrabold text-amber-700">
+                            Combo: <span id="arcade-combo">x1</span>
+                        </div>
+                        <div class="bg-rose-50 border border-rose-200 px-3 py-1 rounded-xl text-xs font-extrabold text-rose-700">
+                            Vidas: <span id="arcade-lives">❤️❤️❤️</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Active Target Banner -->
+                <div id="arcade-target-banner" class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-3 md:p-4 rounded-xl mb-3 shadow-md flex items-center justify-between">
+                    <div class="text-left">
+                        <span class="text-[10px] md:text-xs uppercase font-extrabold tracking-widest text-indigo-200 block">OBJETIVO ATUAL</span>
+                        <h3 id="arcade-target-text" class="text-sm md:text-lg font-black leading-snug">CAPTURE: Variável Independente (VI)</h3>
+                    </div>
+                    <div class="text-right bg-white/20 px-3 py-1.5 rounded-lg whitespace-nowrap">
+                        <span class="text-[10px] uppercase block tracking-wider text-indigo-100">Pontos da Fase</span>
+                        <span id="arcade-score-round" class="text-base md:text-xl font-black">0 / 240 pts</span>
+                    </div>
+                </div>
+
+                <!-- Toast / Explanation Feedback Box for Missed/Wrong Captures -->
+                <div id="arcade-explanation-toast" class="hidden mb-3 p-3 rounded-xl text-left text-xs transition-all duration-300 shadow-md">
+                    <!-- Dynamic feedback content -->
+                </div>
+
+                <!-- Canvas Game Area -->
+                <div class="relative w-full aspect-[4/3] max-h-[460px] bg-slate-900 rounded-xl overflow-hidden shadow-inner border border-slate-800 touch-none" id="canvas-container">
+                    <canvas id="gameCanvas" class="w-full h-full block"></canvas>
+
+                    <!-- Start / Game Over Overlay -->
+                    <div id="arcade-overlay" class="absolute inset-0 bg-slate-900/95 backdrop-blur-sm flex flex-col items-center justify-center p-4 md:p-6 text-white z-10">
+                        <div class="w-14 h-14 rounded-2xl bg-indigo-600 text-white flex items-center justify-center text-3xl font-black mb-2 shadow-lg">
+                            🎯
+                        </div>
+                        <h3 id="overlay-title" class="text-xl md:text-2xl font-black mb-1">Caça-Conceito em Ritmo Tranquilo</h3>
+                        <p id="overlay-subtitle" class="text-xs md:text-sm text-slate-300 max-w-md mb-4 leading-relaxed">
+                            Velocidade reduzida para você ler os conceitos com calma! Use os <strong>botões grandes na tela</strong> (ou arraste o dedo no celular).
+                        </p>
+                        <div id="overlay-score-details" class="hidden mb-4 p-3 bg-white/10 rounded-xl text-center w-full max-w-xs border border-white/10">
+                            <span class="text-xs text-slate-300 uppercase block">Seu Desempenho</span>
+                            <span id="overlay-final-score" class="text-2xl font-black text-amber-300">0 / 240 pts</span>
+                            <span id="overlay-percentage" class="text-xs font-bold text-emerald-400 block mt-0.5">Aproveitamento: 0%</span>
+                        </div>
+                        <!-- Summary list of correct target concepts for learning -->
+                        <div id="overlay-target-summary" class="hidden mb-4 text-left bg-slate-800/80 p-3 rounded-xl border border-slate-700 max-w-md text-xs space-y-1.5 max-h-40 overflow-y-auto">
+                            <!-- Dynamic summary -->
+                        </div>
+                        <button onclick="startArcadeGame()" class="px-8 py-3.5 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 font-extrabold rounded-xl text-base transition shadow-lg transform hover:scale-105 active:scale-95">
+                            ▶️ JOGAR AGORA
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Big Touch Control Buttons for Mobile -->
+                <div class="mt-3 grid grid-cols-2 gap-3">
+                    <button 
+                        id="btn-move-left"
+                        onpointerdown="startMoveLeft()" 
+                        onpointerup="stopMove()" 
+                        onpointerleave="stopMove()"
+                        class="py-3.5 bg-indigo-50 active:bg-indigo-200 border-2 border-indigo-200 rounded-xl flex items-center justify-center gap-2 text-indigo-900 font-extrabold text-base select-none touch-none shadow-sm active:scale-95 transition">
+                        <span>⬅️ ESQUERDA</span>
+                    </button>
+                    <button 
+                        id="btn-move-right"
+                        onpointerdown="startMoveRight()" 
+                        onpointerup="stopMove()" 
+                        onpointerleave="stopMove()"
+                        class="py-3.5 bg-indigo-50 active:bg-indigo-200 border-2 border-indigo-200 rounded-xl flex items-center justify-center gap-2 text-indigo-900 font-extrabold text-base select-none touch-none shadow-sm active:scale-95 transition">
+                        <span>DIREITA ➡️</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 1: QUIZ DE CASOS PRÁTICOS -->
+        <section id="section-quiz" class="hidden space-y-6">
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+                <div class="flex justify-between items-center mb-4">
+                    <span id="quiz-progress-text" class="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                        Questão 1 de 10
+                    </span>
+                    <span id="quiz-category-tag" class="bg-indigo-50 text-indigo-700 text-xs font-bold px-3 py-1 rounded-full">
+                        Categoria
+                    </span>
+                </div>
+
+                <h2 id="quiz-question" class="text-base md:text-lg font-bold text-slate-800 leading-snug mb-2">
+                    Carregando pergunta...
+                </h2>
+                <p id="quiz-context" class="text-xs text-slate-500 mb-6 italic">
+                    Dica de contexto...
+                </p>
+
+                <!-- Feedback Box -->
+                <div id="quiz-feedback" class="hidden p-4 rounded-xl text-sm mb-4"></div>
+
+                <!-- Options -->
+                <div id="quiz-options" class="space-y-3 mb-6">
+                    <!-- Dynamic Options Buttons -->
+                </div>
+
+                <!-- Actions -->
+                <div class="flex justify-end">
+                    <button id="btn-next-quiz" onclick="nextQuestion()" disabled class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-semibold text-sm rounded-xl transition shadow-sm">
+                        Próxima Questão ➔
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: LAB DE VARIÁVEIS -->
+        <section id="section-variables" class="hidden space-y-6">
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+                <div class="flex justify-between items-center mb-3">
+                    <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                        <span>🎯</span> Classifique as Variáveis do Estudo
+                    </h2>
+                    <span class="text-xs font-semibold bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full">Caso Prático</span>
+                </div>
+                <p class="text-xs text-slate-500 mb-6">Leia o cenário clínico/pesquisa abaixo e selecione a opção correta para cada tipo de variável:</p>
+
+                <!-- Scenario Card -->
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 mb-6">
+                    <h3 id="var-scenario-title" class="font-bold text-slate-800 text-sm mb-1">Título do Caso</h3>
+                    <p id="var-scenario-desc" class="text-xs text-slate-600 leading-relaxed">Descrição do experimento...</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <!-- VI Selection -->
+                    <div class="border-2 border-dashed border-indigo-200 bg-indigo-50/40 rounded-xl p-4 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="font-bold text-sm text-indigo-900">Variável Independente (VI)</span>
+                            </div>
+                            <p class="text-xs text-slate-500 mb-3">O que o pesquisador manipula/compara?</p>
+                            <select id="select-vi" class="w-full bg-white border border-slate-300 text-slate-700 text-sm rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 outline-none">
+                                <option value="">-- Selecione o elemento --</option>
+                            </select>
+                        </div>
+                        <div id="vi-status" class="mt-2 text-xs font-semibold hidden"></div>
+                    </div>
+
+                    <!-- VD Selection -->
+                    <div class="border-2 border-dashed border-emerald-200 bg-emerald-50/40 rounded-xl p-4 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="font-bold text-sm text-emerald-900">Variável Dependente (VD)</span>
+                            </div>
+                            <p class="text-xs text-slate-500 mb-3">O que é medido/avaliado?</p>
+                            <select id="select-vd" class="w-full bg-white border border-slate-300 text-slate-700 text-sm rounded-lg p-2.5 focus:ring-2 focus:ring-emerald-500 outline-none">
+                                <option value="">-- Selecione o elemento --</option>
+                            </select>
+                        </div>
+                        <div id="vd-status" class="mt-2 text-xs font-semibold hidden"></div>
+                    </div>
+
+                    <!-- VC Selection -->
+                    <div class="border-2 border-dashed border-amber-200 bg-amber-50/40 rounded-xl p-4 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="font-bold text-sm text-amber-900">Variável de Controle (VC)</span>
+                            </div>
+                            <p class="text-xs text-slate-500 mb-3">O que permanece padronizado?</p>
+                            <select id="select-vc" class="w-full bg-white border border-slate-300 text-slate-700 text-sm rounded-lg p-2.5 focus:ring-2 focus:ring-amber-500 outline-none">
+                                <option value="">-- Selecione o elemento --</option>
+                            </select>
+                        </div>
+                        <div id="vc-status" class="mt-2 text-xs font-semibold hidden"></div>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center">
+                    <span id="var-case-indicator" class="text-xs font-semibold text-slate-400">Caso 1 de 4</span>
+                    <div class="space-x-2">
+                        <button onclick="checkVariableAnswers()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm rounded-xl transition shadow-sm">
+                            Verificar Resposta
+                        </button>
+                        <button id="btn-next-var-case" onclick="nextVarCase()" class="hidden px-5 py-2.5 bg-slate-800 hover:bg-slate-900 text-white font-semibold text-sm rounded-xl transition shadow-sm">
+                            Próximo Caso ➔
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: FLASHCARDS DE FIXAÇÃO -->
+        <section id="section-flashcards" class="hidden space-y-6">
+            <div class="text-center max-w-lg mx-auto">
+                <h2 class="text-xl font-bold text-slate-800">Flashcards de Conceitos-Chave</h2>
+                <p class="text-sm text-slate-500 mt-1">Clique no cartão para virar e ver a explicação + exemplo prático!</p>
+            </div>
+
+            <div class="flex justify-center items-center py-4">
+                <div id="flashcard" onclick="flipCard()" class="card-flip w-full max-w-md h-80 cursor-pointer">
+                    <div id="flashcard-inner" class="card-inner relative w-full h-full rounded-2xl shadow-lg border border-slate-200 bg-white">
+                        <!-- FRONT -->
+                        <div class="card-front absolute inset-0 p-6 flex flex-col justify-between items-center text-center bg-gradient-to-br from-white to-slate-50 rounded-2xl">
+                            <span id="fc-category" class="text-xs font-bold text-indigo-600 uppercase tracking-wider bg-indigo-50 px-3 py-1 rounded-full">
+                                Conceito
+                            </span>
+                            <div class="my-auto">
+                                <h3 id="fc-title" class="text-2xl font-bold text-slate-800 mb-2">Método vs. Metodologia</h3>
+                                <p class="text-xs text-slate-400">Qual a diferença fundamental?</p>
+                            </div>
+                            <span class="text-xs font-medium text-slate-400 flex items-center gap-1">
+                                🔄 Clique para virar
+                            </span>
+                        </div>
+                        <!-- BACK -->
+                        <div class="card-back absolute inset-0 p-6 flex flex-col justify-between bg-indigo-900 text-white rounded-2xl text-left overflow-y-auto">
+                            <div>
+                                <span id="fc-back-category" class="text-xs font-bold text-indigo-300 uppercase tracking-wider">
+                                    Explicação & Exemplo
+                                </span>
+                                <div id="fc-content" class="mt-3 space-y-2 text-sm leading-relaxed text-indigo-100">
+                                    <!-- Dynamic Back content -->
+                                </div>
+                            </div>
+                            <span class="text-xs text-indigo-300 text-center mt-2">🔄 Clique para voltar</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="flex justify-center items-center space-x-4">
+                <button onclick="prevFlashcard()" class="p-3 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition text-slate-600 font-semibold text-xs">
+                    ⬅️ Anterior
+                </button>
+                <span id="fc-indicator" class="text-xs font-semibold text-slate-500">1 / 8</span>
+                <button onclick="nextFlashcard()" class="p-3 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition text-slate-600 font-semibold text-xs">
+                    Próximo ➡️
+                </button>
+            </div>
+        </section>
+
+        <!-- TAB 4: RESUMO RÁPIDO (GUIA DE ESTUDO COMPLEMENTADO) -->
+        <section id="section-cheatsheet" class="hidden space-y-6">
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+                <h2 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+                    <span>📚</span> Guia Teórico Completo para a Prova (Resumo + Livro)
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Concept 1 -->
+                    <div class="border border-slate-100 bg-slate-50 p-4 rounded-xl space-y-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-indigo-600"></span>
+                            <h3 class="font-bold text-slate-800 text-sm">Método, Metodologia e Conhecimento</h3>
+                        </div>
+                        <ul class="text-xs text-slate-600 space-y-1.5 list-disc pl-4">
+                            <li><strong class="text-slate-800">Método (Caminho):</strong> Procedimento prático empregado para alcançar o objetivo (ex: aplicar testes/questionários).</li>
+                            <li><strong class="text-slate-800">Metodologia (Estudo dos Caminhos):</strong> Conjunto e justificativa epistemológica dos métodos escolhidos (Minayo / Fonseca).</li>
+                            <li><strong class="text-slate-800">Senso Comum vs. Científico:</strong> O senso comum é espontâneo, subjetivo e acrítico. O conhecimento científico é <strong class="text-indigo-600">sistemático, acumulativo, verificável e falível/provisório</strong>.</li>
+                        </ul>
+                    </div>
+
+                    <!-- Concept 2 -->
+                    <div class="border border-slate-100 bg-slate-50 p-4 rounded-xl space-y-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-indigo-600"></span>
+                            <h3 class="font-bold text-slate-800 text-sm">Classificação das Variáveis</h3>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs border-collapse">
+                                <thead>
+                                    <tr class="border-b border-slate-200 text-slate-700">
+                                        <th class="py-1">Tipo</th>
+                                        <th class="py-1">Definição</th>
+                                        <th class="py-1">Pergunta-chave</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-slate-600 divide-y divide-slate-200/60">
+                                    <tr>
+                                        <td class="py-1.5 font-bold text-indigo-600">Independente (VI)</td>
+                                        <td>Fator manipulado / Causa investigada</td>
+                                        <td>O que produz alteração?</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-1.5 font-bold text-emerald-600">Dependente (VD)</td>
+                                        <td>Resultado observado ou medido</td>
+                                        <td>O que é medido/avaliado?</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-1.5 font-bold text-amber-600">Controle (VC)</td>
+                                        <td>Fatores padronizados / constantes</td>
+                                        <td>O que precisa permanecer igual?</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Concept 3 -->
+                    <div class="border border-slate-100 bg-slate-50 p-4 rounded-xl space-y-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-indigo-600"></span>
+                            <h3 class="font-bold text-slate-800 text-sm">Abordagens: Quantitativa vs. Qualitativa</h3>
+                        </div>
+                        <ul class="text-xs text-slate-600 space-y-1.5 list-disc pl-4">
+                            <li><strong class="text-slate-800">Quantitativa:</strong> Foca na objetividade, dados numéricos, estatística e instrumentos padronizados. Pergunta: <em>"Quanto? Qual a frequência?"</em></li>
+                            <li><strong class="text-slate-800">Qualitativa:</strong> Busca compreender significados, percepções e vivências em profundidade. Pergunta: <em>"Como? Por quê? Qual o sentido?"</em></li>
+                            <li><strong class="text-slate-800">Dados na Pesquisa:</strong> Toda pesquisa trabalha com dados. Na quanti são numéricos; na quali são narrativos/observacionais (entrevistas, diários de campo).</li>
+                        </ul>
+                    </div>
+
+                    <!-- Concept 4 -->
+                    <div class="border border-slate-100 bg-slate-50 p-4 rounded-xl space-y-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-indigo-600"></span>
+                            <h3 class="font-bold text-slate-800 text-sm">Escrita Científica & Subjetividade</h3>
+                        </div>
+                        <ul class="text-xs text-slate-600 space-y-1.5 list-disc pl-4">
+                            <li><strong class="text-slate-800">Citação:</strong> Feita no corpo do texto (ex: Silva, 2020). Evita o plágio acadêmico.</li>
+                            <li><strong class="text-slate-800">Referência:</strong> Lista ao final com os dados completos da fonte para localização.</li>
+                            <li><strong class="text-slate-800">Subjetividade:</strong> Impossível de ser eliminada a 100%. O pesquisador interage a partir de sua história e valores.</li>
+                            <li><strong class="text-slate-800">Metanálise:</strong> Procedimento de síntese estatística que combina dados de múltiplos estudos anteriores sobre o mesmo tema.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 mt-auto py-4 text-center text-xs text-slate-400">
+        Revisão Prática de Metodologia Científica em Psicologia • Bons estudos na prova! 🚀
+    </footer>
+
+    <!-- SCRIPT DA APLICAÇÃO -->
+    <script>
+        // DATA SOURCES FROM DOCUMENT
+        
+        // 1. QUIZ QUESTIONS
+        const quizData = [
+            {
+                category: "Método vs. Metodologia",
+                question: "Uma estudante do 8º período de Psicologia está escrevendo seu TCC e descreve a aplicação de questionários online e entrevistas semiestruturadas. Esse procedimento prático de coleta é considerado:",
+                context: "Atenção à diferença entre o 'estudo dos procedimentos' e o 'procedimento em si'.",
+                options: [
+                    { text: "A Metodologia da pesquisa.", correct: false, explanation: "Metodologia é a organização teórica e justificativa do conjunto de caminhos, não apenas a técnica aplicada." },
+                    { text: "O Método utilizado.", correct: true, explanation: "Exato! O método é o caminho prático ou procedimento concreto utilizado para alcançar o objetivo." },
+                    { text: "O Conhecimento empírico e imutável.", correct: false, explanation: "Conhecimento científico é sistemático e revisável, e a aplicação do teste é o método." },
+                    { text: "A Variável Independente.", correct: false, explanation: "Isso se refere aos procedimentos de coleta, não a uma variável de um experimento." }
+                ]
+            },
+            {
+                category: "Características do Conhecimento Científico",
+                question: "Qual das seguintes afirmações sobre o Conhecimento Científico na Psicologia está CORRETA?",
+                context: "Lembre-se de como a ciência lida com verdades e descobertas anteriores.",
+                options: [
+                    { text: "É uma verdade final e absoluta que não pode ser alterada por novas pesquisas.", correct: false, explanation: "O conhecimento científico NUNCA é verdade final. Ele é modificável perante novas evidências." },
+                    { text: "Depende exclusivamente da opinião do pesquisador e de sua intuição.", correct: false, explanation: "O conhecimento científico é sistemático e fundamentado em evidências, não apenas em opiniões." },
+                    { text: "É acumulativo (aproveita saberes anteriores) e não é uma verdade final.", correct: true, explanation: "Perfeito! Ele segue etapas sistemáticas, constrói sobre estudos prévios e pode ser questionado." },
+                    { text: "Dispensa procedimentos sistemáticos quando o pesquisador tem muita experiência.", correct: false, explanation: "Mesmo pesquisadores experientes precisam seguir procedimentos sistemáticos rígidos." }
+                ]
+            },
+            {
+                category: "Identificação de Variáveis",
+                question: "Um psicólogo investiga se a 'técnica de relaxamento muscular' diminui o 'nível de cortisol' (hormônio do estresse) em pacientes. Nesse estudo, a 'técnica de relaxamento' é a:",
+                context: "Pergunte-se: O que está sendo manipulado ou testado para ver seu efeito?",
+                options: [
+                    { text: "Variável Dependente (VD)", correct: false, explanation: "O nível de cortisol é a VD (o resultado medido)." },
+                    { text: "Variável Independente (VI)", correct: true, explanation: "Correto! A técnica de relaxamento é a VI, pois é o fator manipulado para verificar se produz alteração." },
+                    { text: "Variável de Controle (VC)", correct: false, explanation: "A técnica é a intervenção principal, não um fator padronizado constante." },
+                    { text: "Subjetividade oculta", correct: false, explanation: "Trata-se do fator manipulado da hipótese, ou seja, a Variável Independente." }
+                ]
+            },
+            {
+                category: "Identificação de Variáveis",
+                question: "No mesmo estudo anterior (relaxamento vs. cortisol), a medição da quantidade de cortisol no sangue é a:",
+                context: "O que o pesquisador está medindo/avaliando como efeito?",
+                options: [
+                    { text: "Variável Independente (VI)", correct: false, explanation: "A intervenção (relaxamento) é a VI." },
+                    { text: "Variável Dependente (VD)", correct: true, explanation: "Exato! A taxa de cortisol é a VD pois é a resposta observada/medida para checar o efeito." },
+                    { text: "Variável de Controle (VC)", correct: false, explanation: "Fatores padronizados da sala/horário são as VC." },
+                    { text: "Metanálise conceitual", correct: false, explanation: "Trata-se da mensuração do efeito, que é a Variável Dependente." }
+                ]
+            }
+        ];
+
+        // 2. VARIABLE LAB CASES
+        const variableCases = [
+            {
+                title: "1. Terapia Online vs. Presencial no Transtorno de Ansiedade",
+                description: "Um pesquisador quer testar se a modalidade de atendimento (Online vs. Presencial) interfere na redução de sintomas de ansiedade (medidos pelo inventário Beck). Ele manteve o mesmo número de sessões (12 semanas) e a mesma abordagem teórica (TCC) para todos os participantes.",
+                options: [
+                    "Modalidade de Atendimento (Online vs. Presencial)",
+                    "Nível de Sintomas de Ansiedade (Escala Beck)",
+                    "Duração (12 semanas) e Abordagem Teórica (TCC)",
+                    "Idade média dos participantes"
+                ],
+                correctVI: "Modalidade de Atendimento (Online vs. Presencial)",
+                correctVD: "Nível de Sintomas de Ansiedade (Escala Beck)",
+                correctVC: "Duração (12 semanas) e Abordagem Teórica (TCC)"
+            },
+            {
+                title: "2. Privação de Sono e Atenção Sustentada",
+                description: "Em um experimento de laboratório, psicólogos comparam o tempo de reação em um teste de atenção entre dois grupos: um grupo dormiu 8 horas e o outro ficou 24 horas acordado. O teste foi aplicado no mesmo computador e em ambiente com iluminação padronizada.",
+                options: [
+                    "Horas de sono / Privação de sono (8h vs 24h)",
+                    "Tempo de reação no teste de atenção",
+                    "Computador utilizado e Iluminação da sala",
+                    "Nível de cafeína ingerido"
+                ],
+                correctVI: "Horas de sono / Privação de sono (8h vs 24h)",
+                correctVD: "Tempo de reação no teste de atenção",
+                correctVC: "Computador utilizado e Iluminação da sala"
+            },
+            {
+                title: "3. Musicoterapia em Sala de Espera de Odontopediatria",
+                description: "Pesquisadores avaliaram a frequência cardíaca de crianças na sala de espera ao expô-las a dois cenários: ambiente com música clássica suave ou ambiente sem som. A temperatura da sala e o tempo de espera (15 minutos) foram mantidos iguais.",
+                options: [
+                    "Presença ou ausência de Música Clássica",
+                    "Frequência cardíaca da criança",
+                    "Temperatura da sala e tempo de espera (15 min)",
+                    "Grito das crianças"
+                ],
+                correctVI: "Presença ou ausência de Música Clássica",
+                correctVD: "Frequência cardíaca da criança",
+                correctVC: "Temperatura da sala e tempo de espera (15 min)"
+            },
+            {
+                title: "4. Treino de Habilidades Sociais em Universitários",
+                description: "Investigou-se se um programa de treinamento em assertividade aumenta a pontuação de autoeficácia social em jovens. Todos os participantes responderam ao mesmo questionário pré e pós-teste nas mesmas condições de aplicação.",
+                options: [
+                    "Programa de treinamento em assertividade",
+                    "Pontuação de autoeficácia social",
+                    "Questionário utilizado e condições de aplicação",
+                    "Nota da prova de Psicologia"
+                ],
+                correctVI: "Programa de treinamento em assertividade",
+                correctVD: "Pontuação de autoeficácia social",
+                correctVC: "Questionário utilizado e condições de aplicação"
+            }
+        ];
+
+        // FLASHCARDS DATA
+        const flashcardsData = [
+            {
+                category: "Método vs. Metodologia",
+                title: "Método",
+                backTitle: "Caminho / Procedimento",
+                backContent: "<strong>O que é:</strong> O procedimento ou instrumento concreto utilizado para alcançar o objetivo.<br><br><strong>Exemplo:</strong> Aplicar um questionário de ansiedade STAI em 50 alunos."
+            },
+            {
+                category: "Método vs. Metodologia",
+                title: "Metodologia",
+                backTitle: "Estudo dos Caminhos",
+                backContent: "<strong>O que é:</strong> O campo que estuda, organiza e justifica a escolha dos métodos e caminhos da pesquisa.<br><br><strong>Diferença-chave:</strong> Método é o 'como fez'; Metodologia é o 'por que e como se fundamentam essas escolhas'."
+            },
+            {
+                category: "Variáveis",
+                title: "Variável Independente (VI)",
+                backTitle: "A Causa / Fator Manipulado",
+                backContent: "<strong>O que é:</strong> O fator que o pesquisador manipula ou considera como CAUSA que produz efeito.<br><br><strong>Pergunta:</strong> 'O que está sendo modificado/comparado?'<br><strong>Exemplo:</strong> Horas de sono (5h vs 8h)."
+            },
+            {
+                category: "Variáveis",
+                title: "Variável Dependente (VD)",
+                backTitle: "O Efeito / O Resultado Medido",
+                backContent: "<strong>O que é:</strong> A resposta ou comportamento que o pesquisador deseja medir/observar. Sofre efeito da VI.<br><br><strong>Pergunta:</strong> 'O que está sendo medido?'<br><strong>Exemplo:</strong> Desempenho no teste de memória."
+            },
+            {
+                category: "Variáveis",
+                title: "Variável de Controle (VC)",
+                backTitle: "Fatores Padronizados",
+                backContent: "<strong>O que é:</strong> Variáveis mantidas constantes para não interferirem no resultado final.<br><br><strong>Exemplo:</strong> Aplicar a prova no mesmo horário, mesma iluminação e com o mesmo tempo para todos."
+            },
+            {
+                category: "Tipos de Pesquisa",
+                title: "Pesquisa Quantitativa",
+                backTitle: "Mensuração & Números",
+                backContent: "<strong>Foco:</strong> Mensurar dados, estatísticas, pontuações.<br><br><strong>Perguntas-chave:</strong> <em>Quanto? Quantos? Qual a frequência?</em><br><strong>Exemplo:</strong> Escore numérico de depressão numa escala de 0 a 40."
+            },
+            {
+                category: "Tipos de Pesquisa",
+                title: "Pesquisa Qualitativa",
+                backTitle: "Significados & Experiências",
+                backContent: "<strong>Foco:</strong> Compreender a fundo vivências, sentidos e percepções.<br><br><strong>Perguntas-chave:</strong> <em>Como? Por quê? Qual o significado?</em><br><strong>Exemplo:</strong> Análise de conteúdo das falas em uma entrevista com mães atípicas."
+            },
+            {
+                category: "Escrita & Síntese",
+                title: "Metanálise",
+                backTitle: "A Análise das Análises",
+                backContent: "<strong>O que é:</strong> Procedimento estatístico que combina os resultados numéricos de MÚLTIPLAS pesquisas sobre o mesmo assunto para chegar a uma conclusão mais robusta.<br><br><strong>Exemplo:</strong> Juntar 30 estudos sobre o efeito da fluoxetina."
+            }
+        ];
+
+        // STATE VARIABLES
+        let currentQuizIndex = 0;
+        let score = 0;
+        let totalAnswered = 0;
+        let correctAnswersCount = 0;
+
+        let currentVarCaseIndex = 0;
+        let currentFlashcardIndex = 0;
+        let isFlipped = false;
+
+        // MAXIMUM CALCULATED SCORE FOR ARCADE (60 pts per target * 4 targets = 240 pts)
+        const MAX_ARCADE_SCORE = 240;
+
+        // ARCADE TARGETS DATA DEFINITION
+        const arcadeTargets = [
+            {
+                type: "VI",
+                title: "Variável Independente (VI)",
+                description: "Fator manipulado / investigado como causa",
+                explanation: "A Variável Independente é o fator investigado ou manipulado pelo pesquisador para verificar se produz alteração sobre o fenômeno.",
+                correctItems: [
+                    { text: "Horas de Sono", exp: "Correto! É a VI que é manipulada (ex: comparar 5h vs 8h) para ver o efeito." },
+                    { text: "Técnica de Relaxamento", exp: "Correto! É o procedimento introduzido pelo psicólogo como causa." },
+                    { text: "Modalidade de Terapia", exp: "Correto! Comparar Online vs. Presencial é a VI da pesquisa." },
+                    { text: "Dose de Medicação", exp: "Correto! O número de miligramas é a causa que o pesquisador manipula." }
+                ],
+                wrongItems: [
+                    { text: "Desempenho da Memória", exp: "Incorreto! A memória é a Variável Dependente (resultado medido)." },
+                    { text: "Taxa de Cortisol", exp: "Incorreto! O cortisol é medido para checar o efeito (Variável Dependente)." },
+                    { text: "Iluminação da Sala", exp: "Incorreto! A iluminação mantida constante é uma Variável de Controle." },
+                    { text: "Pontuação Beck", exp: "Incorreto! A pontuação da escala é o resultado observado (VD)." }
+                ]
+            },
+            {
+                type: "VD",
+                title: "Variável Dependente (VD)",
+                description: "O resultado que é medido ou observado",
+                explanation: "A Variável Dependente é a resposta ou comportamento que o pesquisador mede para verificar a influência da VI.",
+                correctItems: [
+                    { text: "Desempenho na Prova", exp: "Correto! É a pontuação medida como resultado do estudo." },
+                    { text: "Nível de Ansiedade", exp: "Correto! É a resposta observada/avaliada pelo instrumento." },
+                    { text: "Tempo de Reação", exp: "Correto! É o tempo em milissegundos medido após o estímulo." },
+                    { text: "Frequência Cardíaca", exp: "Correto! É o dado fisiológico medido como efeito." }
+                ],
+                wrongItems: [
+                    { text: "Quantidade de Cafeína", exp: "Incorreto! A dose de cafeína fornecida é a Variável Independente." },
+                    { text: "Uso de Música Suave", exp: "Incorreto! A presença/ausência de música é a Variável Independente." },
+                    { text: "Mesmo Horário do Teste", exp: "Incorreto! O horário padronizado é uma Variável de Controle." },
+                    { text: "Tipo de Computador", exp: "Incorreto! Usar a mesma máquina para todos é Variável de Controle." }
+                ]
+            },
+            {
+                type: "VC",
+                title: "Variável de Controle (VC)",
+                description: "Fator mantido constante e padronizado",
+                explanation: "A Variável de Controle são todos os fatores que o pesquisador mantêm idênticos para evitar interferências.",
+                correctItems: [
+                    { text: "Mesmo Horário do Teste", exp: "Correto! Padronizar o horário impede interferência do cansaço biológico." },
+                    { text: "Temperatura da Sala", exp: "Correto! Manter a temperatura constante evita desconforto nos participantes." },
+                    { text: "Mesma Iluminação", exp: "Correto! Garante que as condições visuais sejam iguais para todos." },
+                    { text: "Mesma Idade Média", exp: "Correto! Parear os grupos por faixa etária controla viés de idade." }
+                ],
+                wrongItems: [
+                    { text: "Privação de Sono", exp: "Incorreto! A variação de sono (8h vs 24h) é a Variável Independente." },
+                    { text: "Escore de Depressão", exp: "Incorreto! O resultado numérico medido é a Variável Dependente." },
+                    { text: "Método Clínico", exp: "Incorreto! O método é o procedimento de investigação." },
+                    { text: "Entrevistas Narrativas", exp: "Incorreto! Trata-se da coleta de dados de uma pesquisa qualitativa." }
+                ]
+            },
+            {
+                type: "CONCEITO",
+                title: "Conhecimento Científico & Metodologia",
+                description: "Princípios do saber científico (Minayo / Fonseca)",
+                explanation: "O conhecimento científico é sistemático, acumulativo, verificável e provisório (passível de revisão).",
+                correctItems: [
+                    { text: "Sistemático & Acumulativo", exp: "Correto! Segue etapas ordenadas e aproveita descobertas anteriores." },
+                    { text: "Provisório & Falível", exp: "Correto! Não é verdade final; pode ser revisado com novas evidências." },
+                    { text: "Método = Caminho", exp: "Correto! Método é o procedimento prático concreto adotado." },
+                    { text: "Citação = Corpo do Texto", exp: "Correto! A citação vai no texto (Silva, 2020) para indicar a fonte." }
+                ],
+                wrongItems: [
+                    { text: "Verdade Absoluta e Final", exp: "Incorreto! A ciência jamais se considera um dogma insubstituível." },
+                    { text: "Senso Comum Acrítico", exp: "Incorreto! O senso comum é espontâneo e baseado em opiniões." },
+                    { text: "Impossível de Falsear", exp: "Incorreto! O conhecimento científico deve aceitar ser testado e questionado." },
+                    { text: "Eliminação total de Subjetividade", exp: "Incorreto! A literatura ressalta que é impossível eliminar 100% a subjetividade." }
+                ]
+            }
+        ];
+
+        let arcadeCanvas, ctx;
+        let gameLoopReq = null;
+        let audioCtx = null;
+        let isSoundEnabled = true;
+
+        // Arcade Game State
+        let arcadeState = {
+            activeTargetIndex: 0,
+            score: 0,
+            combo: 1,
+            lives: 3,
+            basketX: 0,
+            basketWidth: 90,
+            basketHeight: 20,
+            bubbles: [],
+            particles: [],
+            isMovingLeft: false,
+            isMovingRight: false,
+            isRunning: false,
+            spawnTimer: 0,
+            touchX: null
+        };
+
+        // Sound Effects Helper
+        function playSound(type) {
+            if (!isSoundEnabled) return;
+            try {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                if (type === 'hit') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+                    osc.frequency.exponentialRampToValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
+                    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.12);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.12);
+                } else if (type === 'wrong') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, audioCtx.currentTime); // A3
+                    osc.frequency.exponentialRampToValueAtTime(130, audioCtx.currentTime + 0.2); // C3
+                    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.22);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.22);
+                } else if (type === 'level') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.3);
+                    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.35);
+                }
+            } catch(e) {}
+        }
+
+        function toggleSound() {
+            isSoundEnabled = !isSoundEnabled;
+            const btn = document.getElementById('btn-sound');
+            const icon = document.getElementById('sound-icon');
+            if (isSoundEnabled) {
+                btn.className = "bg-slate-100 hover:bg-slate-200 border border-slate-300 px-3 py-1 rounded-xl text-xs font-bold text-slate-700 flex items-center gap-1";
+                btn.innerHTML = `<span>🔊</span> Som: ON`;
+            } else {
+                btn.className = "bg-rose-50 border border-rose-200 px-3 py-1 rounded-xl text-xs font-bold text-rose-700 flex items-center gap-1";
+                btn.innerHTML = `<span>🔇</span> Som: OFF`;
+            }
+        }
+
+        // Initialize Arcade Elements
+        function initArcade() {
+            arcadeCanvas = document.getElementById('gameCanvas');
+            if (!arcadeCanvas) return;
+            ctx = arcadeCanvas.getContext('2d');
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+
+            // Controls listeners for Canvas dragging
+            const container = document.getElementById('canvas-container');
+            container.addEventListener('pointermove', (e) => {
+                if (!arcadeState.isRunning) return;
+                const rect = arcadeCanvas.getBoundingClientRect();
+                const scaleX = arcadeCanvas.width / rect.width;
+                arcadeState.basketX = (e.clientX - rect.left) * scaleX - arcadeState.basketWidth / 2;
+            });
+
+            // Keyboard Arrow Listeners
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') arcadeState.isMovingLeft = true;
+                if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') arcadeState.isMovingRight = true;
+            });
+            window.addEventListener('keyup', (e) => {
+                if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') arcadeState.isMovingLeft = false;
+                if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') arcadeState.isMovingRight = false;
+            });
+        }
+
+        function resizeCanvas() {
+            if (!arcadeCanvas) return;
+            const container = document.getElementById('canvas-container');
+            arcadeCanvas.width = container.clientWidth;
+            arcadeCanvas.height = container.clientHeight;
+            arcadeState.basketWidth = Math.max(90, arcadeCanvas.width * 0.22);
+        }
+
+        function startMoveLeft() { arcadeState.isMovingLeft = true; }
+        function startMoveRight() { arcadeState.isMovingRight = true; }
+        function stopMove() { 
+            arcadeState.isMovingLeft = false; 
+            arcadeState.isMovingRight = false; 
+        }
+
+        function startArcadeGame() {
+            arcadeState.activeTargetIndex = 0;
+            arcadeState.score = 0;
+            arcadeState.combo = 1;
+            arcadeState.lives = 3;
+            arcadeState.bubbles = [];
+            arcadeState.particles = [];
+            arcadeState.isRunning = true;
+            arcadeState.basketX = arcadeCanvas.width / 2 - arcadeState.basketWidth / 2;
+
+            document.getElementById('arcade-overlay').classList.add('hidden');
+            document.getElementById('arcade-explanation-toast').classList.add('hidden');
+            updateArcadeUI();
+
+            if (gameLoopReq) cancelAnimationFrame(gameLoopReq);
+            arcadeLoop();
+        }
+
+        function updateArcadeUI() {
+            const currentTarget = arcadeTargets[arcadeState.activeTargetIndex];
+            document.getElementById('arcade-target-text').innerText = `CAPTURE: ${currentTarget.title}`;
+            document.getElementById('arcade-score-round').innerText = `${arcadeState.score} / ${MAX_ARCADE_SCORE} pts`;
+            document.getElementById('arcade-combo').innerText = `x${arcadeState.combo}`;
+            document.getElementById('arcade-lives').innerText = '❤️'.repeat(Math.max(0, arcadeState.lives));
+        }
+
+        function spawnBubble() {
+            const currentTarget = arcadeTargets[arcadeState.activeTargetIndex];
+            const isCorrect = Math.random() < 0.55;
+            let item;
+
+            if (isCorrect) {
+                item = currentTarget.correctItems[Math.floor(Math.random() * currentTarget.correctItems.length)];
+            } else {
+                item = currentTarget.wrongItems[Math.floor(Math.random() * currentTarget.wrongItems.length)];
+            }
+
+            const radius = Math.max(38, Math.min(55, arcadeCanvas.width * 0.1));
+            const x = radius + Math.random() * (arcadeCanvas.width - radius * 2);
+
+            arcadeState.bubbles.push({
+                x: x,
+                y: -radius,
+                radius: radius,
+                text: item.text,
+                exp: item.exp,
+                isCorrect: isCorrect,
+                speed: 1.2 + Math.random() * 0.6 // Slow relaxed fall speed
+            });
+        }
+
+        function showExplanationToast(text, isCorrect, exp) {
+            const toast = document.getElementById('arcade-explanation-toast');
+            toast.classList.remove('hidden', 'bg-emerald-50', 'bg-rose-50', 'border-emerald-200', 'border-rose-200', 'text-emerald-900', 'text-rose-900');
+            
+            if (isCorrect) {
+                toast.classList.add('bg-emerald-50', 'border-emerald-200', 'text-emerald-900');
+                toast.innerHTML = `<strong>✅ ACERTOU!</strong> "${text}" - ${exp}`;
+            } else {
+                toast.classList.add('bg-rose-50', 'border-rose-200', 'text-rose-900');
+                toast.innerHTML = `<strong>❌ ERROU!</strong> "${text}" - ${exp}`;
+            }
+        }
+
+        function createParticles(x, y, color) {
+            for (let i = 0; i < 12; i++) {
+                arcadeState.particles.push({
+                    x: x,
+                    y: y,
+                    vx: (Math.random() - 0.5) * 6,
+                    vy: (Math.random() - 0.5) * 6,
+                    life: 1,
+                    color: color
+                });
+            }
+        }
+
+        function arcadeLoop() {
+            if (!arcadeState.isRunning) return;
+
+            // Move basket with controls
+            const speed = 7;
+            if (arcadeState.isMovingLeft) arcadeState.basketX -= speed;
+            if (arcadeState.isMovingRight) arcadeState.basketX += speed;
+            arcadeState.basketX = Math.max(0, Math.min(arcadeCanvas.width - arcadeState.basketWidth, arcadeState.basketX));
+
+            // Clear screen
+            ctx.fillStyle = '#0F172A';
+            ctx.fillRect(0, 0, arcadeCanvas.width, arcadeCanvas.height);
+
+            // Draw Basket
+            ctx.fillStyle = '#6366F1';
+            ctx.beginPath();
+            ctx.roundRect(arcadeState.basketX, arcadeCanvas.height - arcadeState.basketHeight - 10, arcadeState.basketWidth, arcadeState.basketHeight, 10);
+            ctx.fill();
+
+            // Basket rim glow
+            ctx.fillStyle = '#818CF8';
+            ctx.beginPath();
+            ctx.roundRect(arcadeState.basketX + 4, arcadeCanvas.height - arcadeState.basketHeight - 10, arcadeState.basketWidth - 8, 4, 2);
+            ctx.fill();
+
+            // Spawn bubbles
+            arcadeState.spawnTimer++;
+            if (arcadeState.spawnTimer > 110) {
+                spawnBubble();
+                arcadeState.spawnTimer = 0;
+            }
+
+            // Update & Draw Bubbles
+            for (let i = arcadeState.bubbles.length - 1; i >= 0; i--) {
+                const b = arcadeState.bubbles[i];
+                b.y += b.speed;
+
+                // Draw Bubble Circle
+                ctx.beginPath();
+                ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+                ctx.fillStyle = b.isCorrect ? 'rgba(79, 70, 229, 0.9)' : 'rgba(225, 29, 72, 0.9)';
+                ctx.fill();
+                ctx.strokeStyle = '#FFFFFF';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Draw Text inside Bubble (wrapping)
+                ctx.fillStyle = '#FFFFFF';
+                ctx.font = 'bold 12px Inter, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+
+                const words = b.text.split(' ');
+                if (words.length > 2) {
+                    const mid = Math.ceil(words.length / 2);
+                    ctx.fillText(words.slice(0, mid).join(' '), b.x, b.y - 7);
+                    ctx.fillText(words.slice(mid).join(' '), b.x, b.y + 7);
+                } else {
+                    ctx.fillText(b.text, b.x, b.y);
+                }
+
+                // Check Basket Collision
+                const basketY = arcadeCanvas.height - arcadeState.basketHeight - 10;
+                if (b.y + b.radius >= basketY && b.y - b.radius <= basketY + arcadeState.basketHeight) {
+                    if (b.x + b.radius >= arcadeState.basketX && b.x - b.radius <= arcadeState.basketX + arcadeState.basketWidth) {
+                        // Caught!
+                        if (b.isCorrect) {
+                            arcadeState.score += 15 * arcadeState.combo;
+                            arcadeState.combo = Math.min(5, arcadeState.combo + 1);
+                            createParticles(b.x, b.y, '#10B981');
+                            playSound('hit');
+                            showExplanationToast(b.text, true, b.exp);
+
+                            // Advance Phase check
+                            if (arcadeState.score >= (arcadeState.activeTargetIndex + 1) * 60) {
+                                if (arcadeState.activeTargetIndex < arcadeTargets.length - 1) {
+                                    arcadeState.activeTargetIndex++;
+                                    playSound('level');
+                                    confetti({ particleCount: 30, spread: 60, origin: { y: 0.6 } });
+                                } else {
+                                    // Game Complete Victory!
+                                    endArcadeGame(true);
+                                    return;
+                                }
+                            }
+                        } else {
+                            arcadeState.lives--;
+                            arcadeState.combo = 1;
+                            createParticles(b.x, b.y, '#F43F5E');
+                            playSound('wrong');
+                            showExplanationToast(b.text, false, b.exp);
+
+                            if (arcadeState.lives <= 0) {
+                                endArcadeGame(false);
+                                return;
+                            }
+                        }
+                        updateArcadeUI();
+                        arcadeState.bubbles.splice(i, 1);
+                        continue;
+                    }
+                }
+
+                // Remove out of screen
+                if (b.y - b.radius > arcadeCanvas.height) {
+                    arcadeState.bubbles.splice(i, 1);
+                }
+            }
+
+            // Update & Draw Particles
+            for (let i = arcadeState.particles.length - 1; i >= 0; i--) {
+                const p = arcadeState.particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.life -= 0.04;
+                if (p.life <= 0) {
+                    arcadeState.particles.splice(i, 1);
+                    continue;
+                }
+                ctx.fillStyle = p.color;
+                ctx.globalAlpha = p.life;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.globalAlpha = 1.0;
+            }
+
+            gameLoopReq = requestAnimationFrame(arcadeLoop);
+        }
+
+        function endArcadeGame(isVictory) {
+            arcadeState.isRunning = false;
+            if (gameLoopReq) cancelAnimationFrame(gameLoopReq);
+
+            const overlay = document.getElementById('arcade-overlay');
+            const title = document.getElementById('overlay-title');
+            const subtitle = document.getElementById('overlay-subtitle');
+            const scoreDetails = document.getElementById('overlay-score-details');
+            const finalScore = document.getElementById('overlay-final-score');
+            const percentage = document.getElementById('overlay-percentage');
+            const targetSummary = document.getElementById('overlay-target-summary');
+
+            overlay.classList.remove('hidden');
+            scoreDetails.classList.remove('hidden');
+            targetSummary.classList.remove('hidden');
+
+            const pct = Math.round((arcadeState.score / MAX_ARCADE_SCORE) * 100);
+            finalScore.innerText = `${arcadeState.score} / ${MAX_ARCADE_SCORE} pts`;
+            percentage.innerText = `Aproveitamento: ${pct}%`;
+
+            if (isVictory) {
+                title.innerText = "🏆 PARABÉNS! VOCÊ ZEROU O CAÇA!";
+                subtitle.innerText = "Excelente! Você demonstrou domínio completo dos conceitos de Variáveis e Metodologia!";
+                confetti({ particleCount: 100, spread: 80, origin: { y: 0.5 } });
+            } else {
+                title.innerText = "FIM DE JOGO!";
+                subtitle.innerText = "Revisar as explicações abaixo vai te ajudar a gabaritar a prova de hoje!";
+            }
+
+            // Build summary list of concepts for review
+            let summaryHTML = `<strong class="text-indigo-300 block mb-1">📖 GABARITO & RESUMO DE REVISÃO DA PROVA:</strong>`;
+            arcadeTargets.forEach(target => {
+                summaryHTML += `
+                    <div class="mb-2 pb-1 border-b border-slate-700">
+                        <span class="font-bold text-amber-300 block">${target.title}</span>
+                        <p class="text-slate-300">${target.explanation}</p>
+                    </div>
+                `;
+            });
+            targetSummary.innerHTML = summaryHTML;
+
+            // Sync global score
+            score += arcadeState.score;
+            document.getElementById('score-display').innerText = score;
+        }
+
+        // TAB SWITCHING
+        function switchTab(tabName) {
+            ['arcade', 'quiz', 'variables', 'flashcards', 'cheatsheet'].forEach(t => {
+                document.getElementById(`section-${t}`).classList.add('hidden');
+                document.getElementById(`tab-${t}`).className = "py-3 px-2 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-1.5 whitespace-nowrap";
+            });
+
+            document.getElementById(`section-${tabName}`).classList.remove('hidden');
+            document.getElementById(`tab-${tabName}`).className = "py-3 px-2 border-b-2 border-indigo-600 text-indigo-600 flex items-center gap-1.5 whitespace-nowrap";
+
+            if (tabName === 'arcade') {
+                if (!arcadeCanvas) initArcade();
+            } else {
+                if (arcadeState.isRunning) {
+                    arcadeState.isRunning = false;
+                    if (gameLoopReq) cancelAnimationFrame(gameLoopReq);
+                }
+            }
+        }
+
+        // QUIZ MODULE
+        function loadQuizQuestion() {
+            const q = quizData[currentQuizIndex];
+            document.getElementById('quiz-progress-text').innerText = `Questão ${currentQuizIndex + 1} de ${quizData.length}`;
+            document.getElementById('quiz-category-tag').innerText = q.category;
+            document.getElementById('quiz-question').innerText = q.question;
+            document.getElementById('quiz-context').innerText = q.context;
+
+            const feedback = document.getElementById('quiz-feedback');
+            feedback.className = "hidden p-4 rounded-xl text-sm mb-4";
+            feedback.innerHTML = "";
+
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = "";
+
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-4 rounded-xl border border-slate-200 bg-white hover:border-indigo-300 hover:bg-slate-50 transition font-medium text-sm text-slate-700 flex items-start gap-3";
+                btn.innerHTML = `<span class="w-6 h-6 rounded-full bg-slate-100 text-slate-500 font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">${String.fromCharCode(65 + idx)}</span><span>${opt.text}</span>`;
+                btn.onclick = () => selectQuizOption(idx);
+                optionsContainer.appendChild(btn);
+            });
+
+            document.getElementById('btn-next-quiz').disabled = true;
+        }
+
+        function selectQuizOption(optIdx) {
+            const q = quizData[currentQuizIndex];
+            const selectedOpt = q.options[optIdx];
+            const feedback = document.getElementById('quiz-feedback');
+            const buttons = document.getElementById('quiz-options').children;
+
+            for (let i = 0; i < buttons.length; i++) {
+                buttons[i].disabled = true;
+                if (i === optIdx) {
+                    if (selectedOpt.correct) {
+                        buttons[i].className = "w-full text-left p-4 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-900 font-medium text-sm flex items-start gap-3";
+                    } else {
+                        buttons[i].className = "w-full text-left p-4 rounded-xl border-2 border-rose-500 bg-rose-50 text-rose-900 font-medium text-sm flex items-start gap-3";
+                    }
+                } else if (q.options[i].correct) {
+                    buttons[i].className = "w-full text-left p-4 rounded-xl border-2 border-emerald-300 bg-emerald-50/50 text-emerald-800 font-medium text-sm flex items-start gap-3";
+                }
+            }
+
+            feedback.classList.remove('hidden');
+            totalAnswered++;
+
+            if (selectedOpt.correct) {
+                score += 50;
+                correctAnswersCount++;
+                feedback.className = "p-4 rounded-xl text-sm mb-4 bg-emerald-50 border border-emerald-200 text-emerald-900";
+                feedback.innerHTML = `<strong>✅ Excelente!</strong> ${selectedOpt.explanation}`;
+                confetti({ particleCount: 40, spread: 50, origin: { y: 0.7 } });
+            } else {
+                feedback.className = "p-4 rounded-xl text-sm mb-4 bg-rose-50 border border-rose-200 text-rose-900";
+                feedback.innerHTML = `<strong>❌ Incorreto.</strong> ${selectedOpt.explanation}`;
+            }
+
+            document.getElementById('score-display').innerText = score;
+            document.getElementById('accuracy-display').innerText = `${correctAnswersCount}/${totalAnswered}`;
+            document.getElementById('btn-next-quiz').disabled = false;
+        }
+
+        function nextQuestion() {
+            if (currentQuizIndex < quizData.length - 1) {
+                currentQuizIndex++;
+                loadQuizQuestion();
+            } else {
+                alert(`🎉 Quiz finalizado! Você acertou ${correctAnswersCount} de ${quizData.length} questões!`);
+                currentQuizIndex = 0;
+                loadQuizQuestion();
+            }
+        }
+
+        // VARIABLE LAB MODULE
+        function loadVariableCase() {
+            const vCase = variableCases[currentVarCaseIndex];
+            document.getElementById('var-scenario-title').innerText = vCase.title;
+            document.getElementById('var-scenario-desc').innerText = vCase.description;
+            document.getElementById('var-case-indicator').innerText = `Caso ${currentVarCaseIndex + 1} de ${variableCases.length}`;
+
+            ['select-vi', 'select-vd', 'select-vc'].forEach(id => {
+                const select = document.getElementById(id);
+                select.disabled = false;
+                select.innerHTML = '<option value="">-- Selecione o elemento --</option>';
+                vCase.options.forEach(opt => {
+                    const el = document.createElement('option');
+                    el.value = opt;
+                    el.innerText = opt;
+                    select.appendChild(el);
+                });
+            });
+
+            ['vi-status', 'vd-status', 'vc-status'].forEach(id => {
+                const st = document.getElementById(id);
+                st.classList.add('hidden');
+                st.innerText = '';
+            });
+
+            document.getElementById('btn-next-var-case').classList.add('hidden');
+        }
+
+        function checkVariableAnswers() {
+            const vCase = variableCases[currentVarCaseIndex];
+            const userVI = document.getElementById('select-vi').value;
+            const userVD = document.getElementById('select-vd').value;
+            const userVC = document.getElementById('select-vc').value;
+
+            if (!userVI || !userVD || !userVC) {
+                alert("Por favor, selecione as 3 variáveis antes de verificar!");
+                return;
+            }
+
+            let correctCount = 0;
+
+            const viStatus = document.getElementById('vi-status');
+            viStatus.classList.remove('hidden');
+            if (userVI === vCase.correctVI) {
+                viStatus.className = "mt-2 text-xs font-semibold text-emerald-600";
+                viStatus.innerText = "✅ Correto! Esta é a VI (fator manipulado).";
+                correctCount++;
+            } else {
+                viStatus.className = "mt-2 text-xs font-semibold text-rose-600";
+                viStatus.innerText = `❌ Incorreto. A VI é: ${vCase.correctVI}`;
+            }
+
+            const vdStatus = document.getElementById('vd-status');
+            vdStatus.classList.remove('hidden');
+            if (userVD === vCase.correctVD) {
+                vdStatus.className = "mt-2 text-xs font-semibold text-emerald-600";
+                vdStatus.innerText = "✅ Correto! Esta é a VD (resultado medido).";
+                correctCount++;
+            } else {
+                vdStatus.className = "mt-2 text-xs font-semibold text-rose-600";
+                vdStatus.innerText = `❌ Incorreto. A VD é: ${vCase.correctVD}`;
+            }
+
+            const vcStatus = document.getElementById('vc-status');
+            vcStatus.classList.remove('hidden');
+            if (userVC === vCase.correctVC) {
+                vcStatus.className = "mt-2 text-xs font-semibold text-emerald-600";
+                vcStatus.innerText = "✅ Correto! Esta é a VC (fator mantido constante).";
+                correctCount++;
+            } else {
+                vcStatus.className = "mt-2 text-xs font-semibold text-rose-600";
+                vcStatus.innerText = `❌ Incorreto. A VC é: ${vCase.correctVC}`;
+            }
+
+            score += correctCount * 25;
+            document.getElementById('score-display').innerText = score;
+            document.getElementById('btn-next-var-case').classList.remove('hidden');
+        }
+
+        function nextVarCase() {
+            if (currentVarCaseIndex < variableCases.length - 1) {
+                currentVarCaseIndex++;
+                loadVariableCase();
+            } else {
+                alert("🎯 Parabéns! Você concluiu todos os Casos do Lab de Variáveis!");
+                currentVarCaseIndex = 0;
+                loadVariableCase();
+            }
+        }
+
+        // FLASHCARDS MODULE
+        function loadFlashcard() {
+            const fc = flashcardsData[currentFlashcardIndex];
+            document.getElementById('fc-category').innerText = fc.category;
+            document.getElementById('fc-title').innerText = fc.title;
+            document.getElementById('fc-back-category').innerText = fc.backTitle;
+            document.getElementById('fc-content').innerHTML = fc.backContent;
+            document.getElementById('fc-indicator').innerText = `${currentFlashcardIndex + 1} / ${flashcardsData.length}`;
+
+            const card = document.getElementById('flashcard');
+            card.classList.remove('flipped');
+            isFlipped = false;
+        }
+
+        function flipCard() {
+            const card = document.getElementById('flashcard');
+            card.classList.toggle('flipped');
+            isFlipped = !isFlipped;
+        }
+
+        function prevFlashcard() {
+            if (currentFlashcardIndex > 0) {
+                currentFlashcardIndex--;
+                loadFlashcard();
+            }
+        }
+
+        function nextFlashcard() {
+            if (currentFlashcardIndex < flashcardsData.length - 1) {
+                currentFlashcardIndex++;
+                loadFlashcard();
+            }
+        }
+
+        // INITIAL LOAD
+        window.onload = function() {
+            loadQuizQuestion();
+            loadVariableCase();
+            loadFlashcard();
+            initArcade();
+        };
+    </script>
+</body>
+</html>
