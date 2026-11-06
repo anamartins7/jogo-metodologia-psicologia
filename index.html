@@ -2,22 +2,29 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Master Metodologia - Psicologia</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Master Metodologia - Psicologia UFRGS</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
+        * {
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
         body {
             font-family: 'Inter', sans-serif;
             background-color: #F8FAFC;
-            color: #1E293B;
+            color: #0F172A;
+        }
+        .selectable-text {
+            user-select: text !important;
         }
         .card-flip {
             perspective: 1000px;
         }
         .card-inner {
-            transition: transform 0.6s;
+            transition: transform 0.5s ease-in-out;
             transform-style: preserve-3d;
         }
         .card-flip.flipped .card-inner {
@@ -25,128 +32,137 @@
         }
         .card-front, .card-back {
             backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
         }
         .card-back {
             transform: rotateY(180deg);
         }
+        /* Custom scrollbar for mobile text reader */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F1F5F9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 9999px;
+        }
     </style>
 </head>
-<body class="min-h-screen flex flex-col bg-slate-50 text-slate-800">
+<body class="min-h-screen flex flex-col bg-slate-50 text-slate-900 leading-relaxed">
 
     <!-- Header / Navbar -->
     <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
-        <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-2">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center gap-2">
             <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-xl shadow-md">
+                <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-black text-xl shadow-md">
                     Ψ
                 </div>
                 <div>
-                    <h1 class="font-bold text-base md:text-lg text-slate-800 leading-tight">Revisão de Metodologia</h1>
-                    <p class="text-xs text-slate-500">Psicologia • 8º Período</p>
+                    <h1 class="font-extrabold text-base md:text-lg text-slate-900 leading-tight">Metodologia Científica</h1>
+                    <p class="text-xs font-semibold text-slate-500">Revisão de Prova • Psicologia 8º Período</p>
                 </div>
             </div>
 
-            <!-- Score display & Navigation -->
+            <!-- Score display -->
             <div class="flex items-center space-x-2 md:space-x-4">
-                <div class="bg-indigo-50 border border-indigo-100 rounded-lg px-2.5 py-1 flex items-center space-x-1.5">
-                    <span class="text-xs font-semibold text-indigo-700">Pontos:</span>
-                    <span id="score-display" class="font-extrabold text-indigo-900 text-sm">0</span>
+                <div class="bg-indigo-50 border border-indigo-200 rounded-xl px-3 py-1.5 flex items-center space-x-1.5">
+                    <span class="text-xs font-bold text-indigo-700">Pontos:</span>
+                    <span id="score-display" class="font-black text-indigo-950 text-base">0</span>
                 </div>
-                <div class="bg-emerald-50 border border-emerald-100 rounded-lg px-2.5 py-1 flex items-center space-x-1.5">
-                    <span class="text-xs font-semibold text-emerald-700">Acertos:</span>
-                    <span id="accuracy-display" class="font-extrabold text-emerald-900 text-sm">0/0</span>
+                <div class="bg-emerald-50 border border-emerald-200 rounded-xl px-3 py-1.5 flex items-center space-x-1.5">
+                    <span class="text-xs font-bold text-emerald-700">Acertos:</span>
+                    <span id="accuracy-display" class="font-black text-emerald-950 text-base">0/0</span>
                 </div>
             </div>
         </div>
 
-        <!-- Mode Selector Tabs -->
-        <div class="max-w-6xl mx-auto px-2 flex space-x-2 md:space-x-4 border-t border-slate-100 text-xs md:text-sm font-semibold overflow-x-auto">
-            <button onclick="switchTab('arcade')" id="tab-arcade" class="py-3 px-2 border-b-2 border-indigo-600 text-indigo-600 flex items-center gap-1.5 whitespace-nowrap">
-                <span>🎮</span> Caça-Conceito Arcade
+        <!-- Mode Selector Tabs (Scrollable on small mobile screens) -->
+        <nav class="max-w-6xl mx-auto px-2 flex space-x-1 md:space-x-3 border-t border-slate-100 text-xs md:text-sm font-bold overflow-x-auto no-scrollbar">
+            <button onclick="switchTab('arcade')" id="tab-arcade" class="py-3 px-3 border-b-2 border-indigo-600 text-indigo-600 flex items-center gap-1.5 whitespace-nowrap">
+                <span>🎮</span> Caça Arcade
             </button>
-            <button onclick="switchTab('quiz')" id="tab-quiz" class="py-3 px-2 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-1.5 whitespace-nowrap">
+            <button onclick="switchTab('quiz')" id="tab-quiz" class="py-3 px-3 border-b-2 border-transparent text-slate-600 hover:text-slate-900 flex items-center gap-1.5 whitespace-nowrap">
                 <span>📝</span> Quiz de Casos
             </button>
-            <button onclick="switchTab('variables')" id="tab-variables" class="py-3 px-2 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-1.5 whitespace-nowrap">
+            <button onclick="switchTab('variables')" id="tab-variables" class="py-3 px-3 border-b-2 border-transparent text-slate-600 hover:text-slate-900 flex items-center gap-1.5 whitespace-nowrap">
                 <span>🎯</span> Lab de Variáveis
             </button>
-            <button onclick="switchTab('flashcards')" id="tab-flashcards" class="py-3 px-2 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-1.5 whitespace-nowrap">
+            <button onclick="switchTab('flashcards')" id="tab-flashcards" class="py-3 px-3 border-b-2 border-transparent text-slate-600 hover:text-slate-900 flex items-center gap-1.5 whitespace-nowrap">
                 <span>🎴</span> Flashcards
             </button>
-            <button onclick="switchTab('cheatsheet')" id="tab-cheatsheet" class="py-3 px-2 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-1.5 whitespace-nowrap">
-                <span>💡</span> Resumo Completo
+            <button onclick="switchTab('cheatsheet')" id="tab-cheatsheet" class="py-3 px-3 border-b-2 border-transparent text-slate-600 hover:text-slate-900 flex items-center gap-1.5 whitespace-nowrap">
+                <span>📖</span> Resumo do Livro
             </button>
-        </div>
+        </nav>
     </header>
 
-    <!-- Main Container -->
+    <!-- Main Content Container -->
     <main class="flex-1 max-w-5xl w-full mx-auto p-3 md:p-6">
 
-        <!-- TAB 0: GAME ARCADE MOBILE-FRIENDLY -->
-        <section id="section-arcade" class="space-y-3">
-            <div class="bg-white rounded-2xl p-3 md:p-6 shadow-sm border border-slate-200 text-center relative overflow-hidden">
+        <!-- TAB 0: ARCADE GAME OPTIMIZED FOR MOBILE -->
+        <section id="section-arcade" class="space-y-4">
+            <div class="bg-white rounded-2xl p-4 md:p-6 shadow-sm border border-slate-200 text-center relative">
                 <div class="flex flex-col md:flex-row justify-between items-center mb-3 gap-2">
                     <div class="text-left w-full md:w-auto">
-                        <h2 class="text-lg md:text-xl font-extrabold text-slate-800 flex items-center gap-2">
+                        <h2 class="text-xl md:text-2xl font-black text-slate-900 flex items-center gap-2">
                             ⚡ Caça-Conceito Arcade
                         </h2>
-                        <p class="text-xs text-slate-500">Colete apenas o conceito pedido no objetivo da missão!</p>
+                        <p class="text-xs md:text-sm text-slate-600 font-medium">Capture as bolhas com o conceito correto indicado na missão!</p>
                     </div>
                     <div class="flex items-center justify-between w-full md:w-auto gap-2">
-                        <!-- Sound Toggle Button -->
-                        <button onclick="toggleSound()" id="btn-sound" class="bg-slate-100 hover:bg-slate-200 border border-slate-300 px-3 py-1 rounded-xl text-xs font-bold text-slate-700 flex items-center gap-1">
+                        <button onclick="toggleSound()" id="btn-sound" class="bg-slate-100 hover:bg-slate-200 border border-slate-300 px-3 py-1.5 rounded-xl text-xs font-extrabold text-slate-700 flex items-center gap-1">
                             <span id="sound-icon">🔊</span> Som: ON
                         </button>
-                        <div class="bg-amber-50 border border-amber-200 px-3 py-1 rounded-xl text-xs font-extrabold text-amber-700">
+                        <div class="bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-xl text-xs font-black text-amber-800">
                             Combo: <span id="arcade-combo">x1</span>
                         </div>
-                        <div class="bg-rose-50 border border-rose-200 px-3 py-1 rounded-xl text-xs font-extrabold text-rose-700">
+                        <div class="bg-rose-50 border border-rose-200 px-3 py-1.5 rounded-xl text-xs font-black text-rose-700">
                             Vidas: <span id="arcade-lives">❤️❤️❤️</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Active Target Banner -->
-                <div id="arcade-target-banner" class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-3 md:p-4 rounded-xl mb-3 shadow-md flex items-center justify-between">
+                <div id="arcade-target-banner" class="bg-gradient-to-r from-indigo-600 to-purple-700 text-white p-3.5 md:p-4 rounded-xl mb-3 shadow-md flex items-center justify-between">
                     <div class="text-left">
-                        <span class="text-[10px] md:text-xs uppercase font-extrabold tracking-widest text-indigo-200 block">OBJETIVO ATUAL</span>
+                        <span class="text-[10px] md:text-xs uppercase font-black tracking-wider text-indigo-200 block">OBJETIVO DA FASE</span>
                         <h3 id="arcade-target-text" class="text-sm md:text-lg font-black leading-snug">CAPTURE: Variável Independente (VI)</h3>
                     </div>
                     <div class="text-right bg-white/20 px-3 py-1.5 rounded-lg whitespace-nowrap">
-                        <span class="text-[10px] uppercase block tracking-wider text-indigo-100">Pontos da Fase</span>
+                        <span class="text-[10px] uppercase font-bold tracking-wider text-indigo-100 block">Pontuação</span>
                         <span id="arcade-score-round" class="text-base md:text-xl font-black">0 / 240 pts</span>
                     </div>
                 </div>
 
-                <!-- Toast / Explanation Feedback Box for Missed/Wrong Captures -->
-                <div id="arcade-explanation-toast" class="hidden mb-3 p-3 rounded-xl text-left text-xs transition-all duration-300 shadow-md">
-                    <!-- Dynamic feedback content -->
-                </div>
+                <!-- Real-Time Explanation Toast -->
+                <div id="arcade-explanation-toast" class="hidden mb-3 p-3.5 rounded-xl text-left text-xs md:text-sm font-semibold transition-all duration-300 border"></div>
 
-                <!-- Canvas Game Area -->
-                <div class="relative w-full aspect-[4/3] max-h-[460px] bg-slate-900 rounded-xl overflow-hidden shadow-inner border border-slate-800 touch-none" id="canvas-container">
+                <!-- Mobile-Optimized Canvas Game Area -->
+                <div class="relative w-full aspect-[4/3] max-h-[420px] bg-slate-900 rounded-xl overflow-hidden shadow-inner border border-slate-800 touch-none select-none" id="canvas-container">
                     <canvas id="gameCanvas" class="w-full h-full block"></canvas>
 
-                    <!-- Start / Game Over Overlay -->
+                    <!-- Start / GameOver Overlay -->
                     <div id="arcade-overlay" class="absolute inset-0 bg-slate-900/95 backdrop-blur-sm flex flex-col items-center justify-center p-4 md:p-6 text-white z-10">
                         <div class="w-14 h-14 rounded-2xl bg-indigo-600 text-white flex items-center justify-center text-3xl font-black mb-2 shadow-lg">
                             🎯
                         </div>
-                        <h3 id="overlay-title" class="text-xl md:text-2xl font-black mb-1">Caça-Conceito em Ritmo Tranquilo</h3>
-                        <p id="overlay-subtitle" class="text-xs md:text-sm text-slate-300 max-w-md mb-4 leading-relaxed">
-                            Velocidade reduzida para você ler os conceitos com calma! Use os <strong>botões grandes na tela</strong> (ou arraste o dedo no celular).
+                        <h3 id="overlay-title" class="text-xl md:text-2xl font-black mb-1 text-center">Caça-Conceito (Modo Suave)</h3>
+                        <p id="overlay-subtitle" class="text-xs md:text-sm text-slate-300 max-w-md mb-4 text-center leading-relaxed">
+                            Movimentos otimizados para celulares! Arraste a caçamba na tela ou use os botões grandes de toque.
                         </p>
                         <div id="overlay-score-details" class="hidden mb-4 p-3 bg-white/10 rounded-xl text-center w-full max-w-xs border border-white/10">
-                            <span class="text-xs text-slate-300 uppercase block">Seu Desempenho</span>
+                            <span class="text-xs text-slate-300 uppercase font-bold block">Desempenho da Rodada</span>
                             <span id="overlay-final-score" class="text-2xl font-black text-amber-300">0 / 240 pts</span>
                             <span id="overlay-percentage" class="text-xs font-bold text-emerald-400 block mt-0.5">Aproveitamento: 0%</span>
                         </div>
                         <!-- Summary list of correct target concepts for learning -->
-                        <div id="overlay-target-summary" class="hidden mb-4 text-left bg-slate-800/80 p-3 rounded-xl border border-slate-700 max-w-md text-xs space-y-1.5 max-h-40 overflow-y-auto">
+                        <div id="overlay-target-summary" class="hidden mb-4 text-left bg-slate-800 p-3.5 rounded-xl border border-slate-700 max-w-md text-xs md:text-sm space-y-2 max-h-44 overflow-y-auto selectable-text">
                             <!-- Dynamic summary -->
                         </div>
-                        <button onclick="startArcadeGame()" class="px-8 py-3.5 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 font-extrabold rounded-xl text-base transition shadow-lg transform hover:scale-105 active:scale-95">
-                            ▶️ JOGAR AGORA
+                        <button onclick="startArcadeGame()" class="px-8 py-3.5 bg-indigo-600 hover:bg-indigo-700 font-black rounded-xl text-base transition shadow-lg transform active:scale-95">
+                            ▶️ INICIAR JOGO
                         </button>
                     </div>
                 </div>
@@ -158,7 +174,7 @@
                         onpointerdown="startMoveLeft()" 
                         onpointerup="stopMove()" 
                         onpointerleave="stopMove()"
-                        class="py-3.5 bg-indigo-50 active:bg-indigo-200 border-2 border-indigo-200 rounded-xl flex items-center justify-center gap-2 text-indigo-900 font-extrabold text-base select-none touch-none shadow-sm active:scale-95 transition">
+                        class="py-4 bg-indigo-100 active:bg-indigo-300 border-2 border-indigo-300 rounded-xl flex items-center justify-center gap-2 text-indigo-950 font-black text-base md:text-lg select-none touch-none shadow-sm active:scale-95 transition">
                         <span>⬅️ ESQUERDA</span>
                     </button>
                     <button 
@@ -166,7 +182,7 @@
                         onpointerdown="startMoveRight()" 
                         onpointerup="stopMove()" 
                         onpointerleave="stopMove()"
-                        class="py-3.5 bg-indigo-50 active:bg-indigo-200 border-2 border-indigo-200 rounded-xl flex items-center justify-center gap-2 text-indigo-900 font-extrabold text-base select-none touch-none shadow-sm active:scale-95 transition">
+                        class="py-4 bg-indigo-100 active:bg-indigo-300 border-2 border-indigo-300 rounded-xl flex items-center justify-center gap-2 text-indigo-950 font-black text-base md:text-lg select-none touch-none shadow-sm active:scale-95 transition">
                         <span>DIREITA ➡️</span>
                     </button>
                 </div>
@@ -175,34 +191,32 @@
 
         <!-- TAB 1: QUIZ DE CASOS PRÁTICOS -->
         <section id="section-quiz" class="hidden space-y-6">
-            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+            <div class="bg-white rounded-2xl p-5 md:p-7 shadow-sm border border-slate-200">
                 <div class="flex justify-between items-center mb-4">
-                    <span id="quiz-progress-text" class="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                        Questão 1 de 10
+                    <span id="quiz-progress-text" class="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                        Questão 1 de 6
                     </span>
-                    <span id="quiz-category-tag" class="bg-indigo-50 text-indigo-700 text-xs font-bold px-3 py-1 rounded-full">
+                    <span id="quiz-category-tag" class="bg-indigo-50 text-indigo-700 text-xs font-bold px-3 py-1 rounded-full border border-indigo-100">
                         Categoria
                     </span>
                 </div>
 
-                <h2 id="quiz-question" class="text-base md:text-lg font-bold text-slate-800 leading-snug mb-2">
+                <h2 id="quiz-question" class="text-base md:text-xl font-extrabold text-slate-900 leading-snug mb-3 selectable-text">
                     Carregando pergunta...
                 </h2>
-                <p id="quiz-context" class="text-xs text-slate-500 mb-6 italic">
+                <p id="quiz-context" class="text-xs md:text-sm text-slate-600 mb-6 italic bg-slate-50 p-3 rounded-lg border border-slate-200/60 selectable-text">
                     Dica de contexto...
                 </p>
 
                 <!-- Feedback Box -->
-                <div id="quiz-feedback" class="hidden p-4 rounded-xl text-sm mb-4"></div>
+                <div id="quiz-feedback" class="hidden p-4 rounded-xl text-sm font-semibold mb-5 selectable-text"></div>
 
                 <!-- Options -->
-                <div id="quiz-options" class="space-y-3 mb-6">
-                    <!-- Dynamic Options Buttons -->
-                </div>
+                <div id="quiz-options" class="space-y-3 mb-6"></div>
 
                 <!-- Actions -->
                 <div class="flex justify-end">
-                    <button id="btn-next-quiz" onclick="nextQuestion()" disabled class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-semibold text-sm rounded-xl transition shadow-sm">
+                    <button id="btn-next-quiz" onclick="nextQuestion()" disabled class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 text-white font-bold text-sm rounded-xl transition shadow-sm flex items-center gap-2">
                         Próxima Questão ➔
                     </button>
                 </div>
@@ -211,72 +225,66 @@
 
         <!-- TAB 2: LAB DE VARIÁVEIS -->
         <section id="section-variables" class="hidden space-y-6">
-            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+            <div class="bg-white rounded-2xl p-5 md:p-7 shadow-sm border border-slate-200">
                 <div class="flex justify-between items-center mb-3">
-                    <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
-                        <span>🎯</span> Classifique as Variáveis do Estudo
+                    <h2 class="text-lg md:text-xl font-extrabold text-slate-900 flex items-center gap-2">
+                        🎯 Classificação de Variáveis
                     </h2>
-                    <span class="text-xs font-semibold bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full">Caso Prático</span>
+                    <span class="text-xs font-bold bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full border border-indigo-100">Cenários Clínicos</span>
                 </div>
-                <p class="text-xs text-slate-500 mb-6">Leia o cenário clínico/pesquisa abaixo e selecione a opção correta para cada tipo de variável:</p>
+                <p class="text-xs md:text-sm text-slate-600 mb-5">Leia a situação experimental e selecione os componentes correspondentes às 3 variáveis:</p>
 
                 <!-- Scenario Card -->
-                <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 mb-6">
-                    <h3 id="var-scenario-title" class="font-bold text-slate-800 text-sm mb-1">Título do Caso</h3>
-                    <p id="var-scenario-desc" class="text-xs text-slate-600 leading-relaxed">Descrição do experimento...</p>
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 md:p-5 mb-6 selectable-text">
+                    <h3 id="var-scenario-title" class="font-extrabold text-slate-900 text-sm md:text-base mb-1.5">Título do Caso</h3>
+                    <p id="var-scenario-desc" class="text-xs md:text-sm text-slate-700 leading-relaxed">Descrição do experimento...</p>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                     <!-- VI Selection -->
-                    <div class="border-2 border-dashed border-indigo-200 bg-indigo-50/40 rounded-xl p-4 flex flex-col justify-between">
+                    <div class="border-2 border-indigo-200 bg-indigo-50/40 rounded-xl p-4 flex flex-col justify-between">
                         <div>
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="font-bold text-sm text-indigo-900">Variável Independente (VI)</span>
-                            </div>
-                            <p class="text-xs text-slate-500 mb-3">O que o pesquisador manipula/compara?</p>
-                            <select id="select-vi" class="w-full bg-white border border-slate-300 text-slate-700 text-sm rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 outline-none">
-                                <option value="">-- Selecione o elemento --</option>
+                            <span class="font-extrabold text-sm text-indigo-950 block mb-1">Variável Independente (VI)</span>
+                            <p class="text-xs text-slate-600 mb-3">Fator manipulado / causa testada.</p>
+                            <select id="select-vi" class="w-full bg-white border border-slate-300 text-slate-800 text-xs md:text-sm rounded-lg p-3 font-semibold focus:ring-2 focus:ring-indigo-500 outline-none">
+                                <option value="">-- Selecione a VI --</option>
                             </select>
                         </div>
-                        <div id="vi-status" class="mt-2 text-xs font-semibold hidden"></div>
+                        <div id="vi-status" class="mt-3 text-xs font-bold hidden"></div>
                     </div>
 
                     <!-- VD Selection -->
-                    <div class="border-2 border-dashed border-emerald-200 bg-emerald-50/40 rounded-xl p-4 flex flex-col justify-between">
+                    <div class="border-2 border-emerald-200 bg-emerald-50/40 rounded-xl p-4 flex flex-col justify-between">
                         <div>
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="font-bold text-sm text-emerald-900">Variável Dependente (VD)</span>
-                            </div>
-                            <p class="text-xs text-slate-500 mb-3">O que é medido/avaliado?</p>
-                            <select id="select-vd" class="w-full bg-white border border-slate-300 text-slate-700 text-sm rounded-lg p-2.5 focus:ring-2 focus:ring-emerald-500 outline-none">
-                                <option value="">-- Selecione o elemento --</option>
+                            <span class="font-extrabold text-sm text-emerald-950 block mb-1">Variável Dependente (VD)</span>
+                            <p class="text-xs text-slate-600 mb-3">Resultado medido / avaliado.</p>
+                            <select id="select-vd" class="w-full bg-white border border-slate-300 text-slate-800 text-xs md:text-sm rounded-lg p-3 font-semibold focus:ring-2 focus:ring-emerald-500 outline-none">
+                                <option value="">-- Selecione a VD --</option>
                             </select>
                         </div>
-                        <div id="vd-status" class="mt-2 text-xs font-semibold hidden"></div>
+                        <div id="vd-status" class="mt-3 text-xs font-bold hidden"></div>
                     </div>
 
                     <!-- VC Selection -->
-                    <div class="border-2 border-dashed border-amber-200 bg-amber-50/40 rounded-xl p-4 flex flex-col justify-between">
+                    <div class="border-2 border-amber-200 bg-amber-50/40 rounded-xl p-4 flex flex-col justify-between">
                         <div>
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="font-bold text-sm text-amber-900">Variável de Controle (VC)</span>
-                            </div>
-                            <p class="text-xs text-slate-500 mb-3">O que permanece padronizado?</p>
-                            <select id="select-vc" class="w-full bg-white border border-slate-300 text-slate-700 text-sm rounded-lg p-2.5 focus:ring-2 focus:ring-amber-500 outline-none">
-                                <option value="">-- Selecione o elemento --</option>
+                            <span class="font-extrabold text-sm text-amber-950 block mb-1">Variável de Controle (VC)</span>
+                            <p class="text-xs text-slate-600 mb-3">Fator padronizado / mantido constante.</p>
+                            <select id="select-vc" class="w-full bg-white border border-slate-300 text-slate-800 text-xs md:text-sm rounded-lg p-3 font-semibold focus:ring-2 focus:ring-amber-500 outline-none">
+                                <option value="">-- Selecione a VC --</option>
                             </select>
                         </div>
-                        <div id="vc-status" class="mt-2 text-xs font-semibold hidden"></div>
+                        <div id="vc-status" class="mt-3 text-xs font-bold hidden"></div>
                     </div>
                 </div>
 
                 <div class="flex justify-between items-center">
-                    <span id="var-case-indicator" class="text-xs font-semibold text-slate-400">Caso 1 de 4</span>
+                    <span id="var-case-indicator" class="text-xs font-bold text-slate-500">Caso 1 de 4</span>
                     <div class="space-x-2">
-                        <button onclick="checkVariableAnswers()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm rounded-xl transition shadow-sm">
-                            Verificar Resposta
+                        <button onclick="checkVariableAnswers()" class="px-5 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl transition shadow-sm">
+                            Verificar Respostas
                         </button>
-                        <button id="btn-next-var-case" onclick="nextVarCase()" class="hidden px-5 py-2.5 bg-slate-800 hover:bg-slate-900 text-white font-semibold text-sm rounded-xl transition shadow-sm">
+                        <button id="btn-next-var-case" onclick="nextVarCase()" class="hidden px-5 py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm rounded-xl transition shadow-sm">
                             Próximo Caso ➔
                         </button>
                     </div>
@@ -287,37 +295,37 @@
         <!-- TAB 3: FLASHCARDS DE FIXAÇÃO -->
         <section id="section-flashcards" class="hidden space-y-6">
             <div class="text-center max-w-lg mx-auto">
-                <h2 class="text-xl font-bold text-slate-800">Flashcards de Conceitos-Chave</h2>
-                <p class="text-sm text-slate-500 mt-1">Clique no cartão para virar e ver a explicação + exemplo prático!</p>
+                <h2 class="text-xl md:text-2xl font-black text-slate-900">Flashcards de Estudo Rápido</h2>
+                <p class="text-xs md:text-sm text-slate-600 mt-1">Toque no cartão para virar e estudar a teoria com exemplo!</p>
             </div>
 
-            <div class="flex justify-center items-center py-4">
-                <div id="flashcard" onclick="flipCard()" class="card-flip w-full max-w-md h-80 cursor-pointer">
-                    <div id="flashcard-inner" class="card-inner relative w-full h-full rounded-2xl shadow-lg border border-slate-200 bg-white">
+            <div class="flex justify-center items-center py-2">
+                <div id="flashcard" onclick="flipCard()" class="card-flip w-full max-w-md h-88 cursor-pointer">
+                    <div id="flashcard-inner" class="card-inner relative w-full h-full rounded-2xl shadow-md border border-slate-200 bg-white">
                         <!-- FRONT -->
                         <div class="card-front absolute inset-0 p-6 flex flex-col justify-between items-center text-center bg-gradient-to-br from-white to-slate-50 rounded-2xl">
-                            <span id="fc-category" class="text-xs font-bold text-indigo-600 uppercase tracking-wider bg-indigo-50 px-3 py-1 rounded-full">
+                            <span id="fc-category" class="text-xs font-bold text-indigo-700 uppercase tracking-wider bg-indigo-50 border border-indigo-100 px-3 py-1 rounded-full">
                                 Conceito
                             </span>
                             <div class="my-auto">
-                                <h3 id="fc-title" class="text-2xl font-bold text-slate-800 mb-2">Método vs. Metodologia</h3>
-                                <p class="text-xs text-slate-400">Qual a diferença fundamental?</p>
+                                <h3 id="fc-title" class="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2">Método vs. Metodologia</h3>
+                                <p class="text-xs md:text-sm text-slate-500 font-medium">Toque para ver a explicação técnica</p>
                             </div>
-                            <span class="text-xs font-medium text-slate-400 flex items-center gap-1">
-                                🔄 Clique para virar
+                            <span class="text-xs font-bold text-indigo-600 flex items-center gap-1">
+                                🔄 Virar Cartão
                             </span>
                         </div>
                         <!-- BACK -->
-                        <div class="card-back absolute inset-0 p-6 flex flex-col justify-between bg-indigo-900 text-white rounded-2xl text-left overflow-y-auto">
+                        <div class="card-back absolute inset-0 p-6 flex flex-col justify-between bg-slate-900 text-white rounded-2xl text-left overflow-y-auto selectable-text">
                             <div>
-                                <span id="fc-back-category" class="text-xs font-bold text-indigo-300 uppercase tracking-wider">
-                                    Explicação & Exemplo
+                                <span id="fc-back-category" class="text-xs font-extrabold text-indigo-300 uppercase tracking-wider block mb-2">
+                                    Definição & Exemplo
                                 </span>
-                                <div id="fc-content" class="mt-3 space-y-2 text-sm leading-relaxed text-indigo-100">
-                                    <!-- Dynamic Back content -->
+                                <div id="fc-content" class="text-xs md:text-sm leading-relaxed text-slate-200 space-y-2">
+                                    <!-- Dynamic content -->
                                 </div>
                             </div>
-                            <span class="text-xs text-indigo-300 text-center mt-2">🔄 Clique para voltar</span>
+                            <span class="text-xs font-semibold text-indigo-300 text-center mt-3 block">🔄 Toque para voltar ao frente</span>
                         </div>
                     </div>
                 </div>
@@ -325,267 +333,447 @@
 
             <!-- Controls -->
             <div class="flex justify-center items-center space-x-4">
-                <button onclick="prevFlashcard()" class="p-3 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition text-slate-600 font-semibold text-xs">
+                <button onclick="prevFlashcard()" class="px-4 py-3 bg-white border border-slate-300 rounded-xl hover:bg-slate-100 transition text-slate-800 font-bold text-xs md:text-sm shadow-sm">
                     ⬅️ Anterior
                 </button>
-                <span id="fc-indicator" class="text-xs font-semibold text-slate-500">1 / 8</span>
-                <button onclick="nextFlashcard()" class="p-3 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition text-slate-600 font-semibold text-xs">
+                <span id="fc-indicator" class="text-xs md:text-sm font-bold text-slate-600">1 / 8</span>
+                <button onclick="nextFlashcard()" class="px-4 py-3 bg-white border border-slate-300 rounded-xl hover:bg-slate-100 transition text-slate-800 font-bold text-xs md:text-sm shadow-sm">
                     Próximo ➡️
                 </button>
             </div>
         </section>
 
-        <!-- TAB 4: RESUMO RÁPIDO (GUIA DE ESTUDO COMPLEMENTADO) -->
-        <section id="section-cheatsheet" class="hidden space-y-6">
-            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
-                <h2 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
-                    <span>📚</span> Guia Teórico Completo para a Prova (Resumo + Livro)
-                </h2>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Concept 1 -->
-                    <div class="border border-slate-100 bg-slate-50 p-4 rounded-xl space-y-2">
-                        <div class="flex items-center space-x-2">
-                            <span class="w-2.5 h-2.5 rounded-full bg-indigo-600"></span>
-                            <h3 class="font-bold text-slate-800 text-sm">Método, Metodologia e Conhecimento</h3>
-                        </div>
-                        <ul class="text-xs text-slate-600 space-y-1.5 list-disc pl-4">
-                            <li><strong class="text-slate-800">Método (Caminho):</strong> Procedimento prático empregado para alcançar o objetivo (ex: aplicar testes/questionários).</li>
-                            <li><strong class="text-slate-800">Metodologia (Estudo dos Caminhos):</strong> Conjunto e justificativa epistemológica dos métodos escolhidos (Minayo / Fonseca).</li>
-                            <li><strong class="text-slate-800">Senso Comum vs. Científico:</strong> O senso comum é espontâneo, subjetivo e acrítico. O conhecimento científico é <strong class="text-indigo-600">sistemático, acumulativo, verificável e falível/provisório</strong>.</li>
-                        </ul>
+        <!-- TAB 4: RESUMO TEÓRICO AMPLIADO (BASEADO NO LIVRO DA UFRGS) -->
+        <section id="section-cheatsheet" class="hidden space-y-6 selectable-text">
+            <div class="bg-white rounded-2xl p-5 md:p-8 shadow-sm border border-slate-200 space-y-8">
+                
+                <div>
+                    <div class="flex items-center space-x-3 mb-2">
+                        <span class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-black text-sm">1</span>
+                        <h2 class="text-lg md:text-xl font-black text-slate-900">Método, Metodologia e Tipos de Conhecimento</h2>
                     </div>
-
-                    <!-- Concept 2 -->
-                    <div class="border border-slate-100 bg-slate-50 p-4 rounded-xl space-y-2">
-                        <div class="flex items-center space-x-2">
-                            <span class="w-2.5 h-2.5 rounded-full bg-indigo-600"></span>
-                            <h3 class="font-bold text-slate-800 text-sm">Classificação das Variáveis</h3>
+                    <p class="text-xs md:text-sm text-slate-600 mb-4 pl-11">Fundamentado no Livro Oficial de Metodologia da Pesquisa (Gerhardt & Silveira, UFRGS, 2009).</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pl-0 md:pl-11">
+                        <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl">
+                            <h3 class="font-extrabold text-slate-900 text-sm mb-1.5 text-indigo-700">Método (O Caminho)</h3>
+                            <p class="text-xs md:text-sm text-slate-700 leading-relaxed">
+                                Conjunto de procedimentos ou passos práticos adotados para alcançar determinado objetivo de pesquisa (ex: aplicar questionários, realizar testes neuropsicológicos).
+                            </p>
                         </div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left text-xs border-collapse">
-                                <thead>
-                                    <tr class="border-b border-slate-200 text-slate-700">
-                                        <th class="py-1">Tipo</th>
-                                        <th class="py-1">Definição</th>
-                                        <th class="py-1">Pergunta-chave</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="text-slate-600 divide-y divide-slate-200/60">
-                                    <tr>
-                                        <td class="py-1.5 font-bold text-indigo-600">Independente (VI)</td>
-                                        <td>Fator manipulado / Causa investigada</td>
-                                        <td>O que produz alteração?</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="py-1.5 font-bold text-emerald-600">Dependente (VD)</td>
-                                        <td>Resultado observado ou medido</td>
-                                        <td>O que é medido/avaliado?</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="py-1.5 font-bold text-amber-600">Controle (VC)</td>
-                                        <td>Fatores padronizados / constantes</td>
-                                        <td>O que precisa permanecer igual?</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl">
+                            <h3 class="font-extrabold text-slate-900 text-sm mb-1.5 text-indigo-700">Metodologia (Estudo do Caminho)</h3>
+                            <p class="text-xs md:text-sm text-slate-700 leading-relaxed">
+                                Análise epistemológica e justificativa teórica dos métodos escolhidos. Envolve a articulação entre a teoria do pesquisador, o objeto de estudo e os procedimentos (Minayo, 2007).
+                            </p>
+                        </div>
+                        <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl">
+                            <h3 class="font-extrabold text-slate-900 text-sm mb-1.5 text-indigo-700">Conhecimento Científico</h3>
+                            <p class="text-xs md:text-sm text-slate-700 leading-relaxed">
+                                Produzido por investigação sistemática e racional. É <strong>sistemático, acumulativo, verificável, falível e provisório</strong> (não é verdade absoluta nem final).
+                            </p>
                         </div>
                     </div>
 
-                    <!-- Concept 3 -->
-                    <div class="border border-slate-100 bg-slate-50 p-4 rounded-xl space-y-2">
-                        <div class="flex items-center space-x-2">
-                            <span class="w-2.5 h-2.5 rounded-full bg-indigo-600"></span>
-                            <h3 class="font-bold text-slate-800 text-sm">Abordagens: Quantitativa vs. Qualitativa</h3>
-                        </div>
-                        <ul class="text-xs text-slate-600 space-y-1.5 list-disc pl-4">
-                            <li><strong class="text-slate-800">Quantitativa:</strong> Foca na objetividade, dados numéricos, estatística e instrumentos padronizados. Pergunta: <em>"Quanto? Qual a frequência?"</em></li>
-                            <li><strong class="text-slate-800">Qualitativa:</strong> Busca compreender significados, percepções e vivências em profundidade. Pergunta: <em>"Como? Por quê? Qual o sentido?"</em></li>
-                            <li><strong class="text-slate-800">Dados na Pesquisa:</strong> Toda pesquisa trabalha com dados. Na quanti são numéricos; na quali são narrativos/observacionais (entrevistas, diários de campo).</li>
-                        </ul>
-                    </div>
-
-                    <!-- Concept 4 -->
-                    <div class="border border-slate-100 bg-slate-50 p-4 rounded-xl space-y-2">
-                        <div class="flex items-center space-x-2">
-                            <span class="w-2.5 h-2.5 rounded-full bg-indigo-600"></span>
-                            <h3 class="font-bold text-slate-800 text-sm">Escrita Científica & Subjetividade</h3>
-                        </div>
-                        <ul class="text-xs text-slate-600 space-y-1.5 list-disc pl-4">
-                            <li><strong class="text-slate-800">Citação:</strong> Feita no corpo do texto (ex: Silva, 2020). Evita o plágio acadêmico.</li>
-                            <li><strong class="text-slate-800">Referência:</strong> Lista ao final com os dados completos da fonte para localização.</li>
-                            <li><strong class="text-slate-800">Subjetividade:</strong> Impossível de ser eliminada a 100%. O pesquisador interage a partir de sua história e valores.</li>
-                            <li><strong class="text-slate-800">Metanálise:</strong> Procedimento de síntese estatística que combina dados de múltiplos estudos anteriores sobre o mesmo tema.</li>
-                        </ul>
+                    <!-- Comparison Table of Knowledge Types -->
+                    <div class="mt-4 pl-0 md:pl-11 overflow-x-auto">
+                        <h4 class="font-extrabold text-xs uppercase tracking-wider text-slate-500 mb-2">As 4 Modalidades de Conhecimento (Tartuce, 2006):</h4>
+                        <table class="w-full text-left text-xs md:text-sm border-collapse border border-slate-200 rounded-lg">
+                            <thead>
+                                <tr class="bg-slate-100 text-slate-800 font-extrabold border-b border-slate-200">
+                                    <th class="p-2.5">Tipo</th>
+                                    <th class="p-2.5">Origem / Fonte</th>
+                                    <th class="p-2.5">Características Principais</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-200 text-slate-700">
+                                <tr>
+                                    <td class="p-2.5 font-bold text-amber-700">Empírico (Senso Comum)</td>
+                                    <td class="p-2.5">Experiência cotidiana e hábitos</td>
+                                    <td class="p-2.5">Espontâneo, acrítico, subjetivo e valorativo.</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2.5 font-bold text-purple-700">Filosófico</td>
+                                    <td class="p-2.5">Reflexão racional e especulação</td>
+                                    <td class="p-2.5">Busca causas profundas, sistemático, não verificável em laboratório.</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2.5 font-bold text-blue-700">Teológico (Místico)</td>
+                                    <td class="p-2.5">Fé e revelação divina</td>
+                                    <td class="p-2.5">Baseado em dogmas sagrados imutáveis; não se submete à verificação empírica.</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2.5 font-bold text-emerald-700">Científico</td>
+                                    <td class="p-2.5">Investigação metódica e testes</td>
+                                    <td class="p-2.5">Objetivo, sistemático, testável, acumulativo e contingente (falível/provisório).</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
+
+                <hr class="border-slate-200">
+
+                <!-- Section 2: Variables -->
+                <div>
+                    <div class="flex items-center space-x-3 mb-2">
+                        <span class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-black text-sm">2</span>
+                        <h2 class="text-lg md:text-xl font-black text-slate-900">Relação de Controle e Tipos de Variáveis</h2>
+                    </div>
+                    <p class="text-xs md:text-sm text-slate-600 mb-4 pl-11">A relação de controle isola interferências externas para garantir a validade interna da pesquisa.</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pl-0 md:pl-11">
+                        <div class="bg-indigo-50/60 border border-indigo-200 p-4 rounded-xl">
+                            <span class="text-xs font-black uppercase text-indigo-700 block mb-1">Variável Independente (VI)</span>
+                            <h3 class="font-bold text-slate-900 text-sm mb-1">O Fator Manipulado / Causa</h3>
+                            <p class="text-xs md:text-sm text-slate-700">É a variável que o pesquisador manipula ou considera como estímulo/causa para verificar se produz alteração na outra variável.<br><em>Pergunta: O que provoca o efeito?</em></p>
+                        </div>
+
+                        <div class="bg-emerald-50/60 border border-emerald-200 p-4 rounded-xl">
+                            <span class="text-xs font-black uppercase text-emerald-700 block mb-1">Variável Dependente (VD)</span>
+                            <h3 class="font-bold text-slate-900 text-sm mb-1">O Efeito / Resultado Medido</h3>
+                            <p class="text-xs md:text-sm text-slate-700">É o comportamento ou resposta observada e medida pelo pesquisador para checar a influência da VI.<br><em>Pergunta: O que está sendo avaliado/medido?</em></p>
+                        </div>
+
+                        <div class="bg-amber-50/60 border border-amber-200 p-4 rounded-xl">
+                            <span class="text-xs font-black uppercase text-amber-800 block mb-1">Variável de Controle (VC)</span>
+                            <h3 class="font-bold text-slate-900 text-sm mb-1">Fatores Padronizados</h3>
+                            <p class="text-xs md:text-sm text-slate-700">Fatores mantidos estritamente constantes no experimento para impedir que interfiram nos resultados.<br><em>Pergunta: O que precisa permanecer igual?</em></p>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="border-slate-200">
+
+                <!-- Section 3: Taxonomy of Research -->
+                <div>
+                    <div class="flex items-center space-x-3 mb-2">
+                        <span class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-black text-sm">3</span>
+                        <h2 class="text-lg md:text-xl font-black text-slate-900">Classificação das Pesquisas Científicas (Gil, 2007)</h2>
+                    </div>
+
+                    <div class="space-y-4 pl-0 md:pl-11">
+                        <!-- Abordagem -->
+                        <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl">
+                            <h3 class="font-extrabold text-slate-900 text-sm mb-2 text-indigo-700">1. Quanto à Abordagem</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs md:text-sm text-slate-700">
+                                <div>
+                                    <strong class="text-slate-900 font-bold block mb-1">Pesquisa Quantitativa:</strong>
+                                    Trabalha com quantificação e dados numéricos. Utiliza ferramentas estatísticas e instrumentos padronizados para identificar padrões e causalidades. <em>(Mede "quanto" ou a "frequência").</em>
+                                </div>
+                                <div>
+                                    <strong class="text-slate-900 font-bold block mb-1">Pesquisa Qualitativa:</strong>
+                                    Foca no aprofundamento e compreensão de significados, motivações, atitudes e crenças em seu contexto natural (Minayo, 2001). Não busca quantificar valores. <em>(Mede "como" e "por quê").</em>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Natureza e Objetivos -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl">
+                                <h3 class="font-extrabold text-slate-900 text-sm mb-2 text-indigo-700">2. Quanto aos Objetivos</h3>
+                                <ul class="text-xs md:text-sm text-slate-700 space-y-2 list-disc pl-4">
+                                    <li><strong>Exploratória:</strong> Visa proporcionar maior familiaridade com o problema (ex: revisão bibliográfica ou entrevistas preliminares).</li>
+                                    <li><strong>Descritiva:</strong> Pretende descrever as características de determinada população ou fenômeno (ex: estudos de opinião).</li>
+                                    <li><strong>Explicativa:</strong> Preocupa-se em identificar os fatores de causa que determinam a ocorrência dos fenômenos.</li>
+                                </ul>
+                            </div>
+
+                            <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl">
+                                <h3 class="font-extrabold text-slate-900 text-sm mb-2 text-indigo-700">3. Quanto aos Procedimentos</h3>
+                                <ul class="text-xs md:text-sm text-slate-700 space-y-1.5 list-disc pl-4">
+                                    <li><strong>Experimental:</strong> Manipula diretamente as variáveis independentes em ambiente controlado.</li>
+                                    <li><strong>Ex-post-facto:</strong> Estuda o fenômeno após sua ocorrência (quando não é possível manipular a causa).</li>
+                                    <li><strong>Estudo de Caso:</strong> Estudo profundo de uma única unidade (uma pessoa, instituição ou grupo).</li>
+                                    <li><strong>Pesquisa-Ação:</strong> Investigação realizada em associação com a resolução de um problema coletivo (Thiollent).</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="border-slate-200">
+
+                <!-- Section 4: Writing and Ethics -->
+                <div>
+                    <div class="flex items-center space-x-3 mb-2">
+                        <span class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-black text-sm">4</span>
+                        <h2 class="text-lg md:text-xl font-black text-slate-900">Escrita Científica, Subjetividade & Metanálise</h2>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pl-0 md:pl-11 text-xs md:text-sm text-slate-700">
+                        <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl space-y-2">
+                            <h3 class="font-bold text-slate-900 text-sm text-indigo-700">Citação vs. Referência</h3>
+                            <p><strong>Citação:</strong> Menção no corpo do texto da fonte de onde a ideia foi extraída (ex: Silva, 2020). A falta de citação caracteriza plágio.</p>
+                            <p><strong>Referência:</strong> Lista completa ao final do trabalho contendo autor, título, ano, editora ou link para localização da obra.</p>
+                        </div>
+
+                        <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl space-y-2">
+                            <h3 class="font-bold text-slate-900 text-sm text-indigo-700">Subjetividade & Metanálise</h3>
+                            <p><strong>Subjetividade:</strong> O material ressalta ser impossível eliminar 100% da subjetividade do pesquisador, pois suas experiências e valores interagem no processo de interpretação.</p>
+                            <p><strong>Metanálise:</strong> Conhecida como "análise das análises". É a combinação estatística dos resultados de múltiplos estudos independentes sobre o mesmo problema.</p>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </section>
 
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white border-t border-slate-200 mt-auto py-4 text-center text-xs text-slate-400">
-        Revisão Prática de Metodologia Científica em Psicologia • Bons estudos na prova! 🚀
+    <footer class="bg-white border-t border-slate-200 mt-auto py-4 text-center text-xs text-slate-500 font-medium">
+        Revisão Prática de Metodologia Científica em Psicologia • UFRGS 🎓
     </footer>
 
     <!-- SCRIPT DA APLICAÇÃO -->
     <script>
-        // DATA SOURCES FROM DOCUMENT
+        // DATA SOURCES FROM DOCUMENT & BOOK
         
-        // 1. QUIZ QUESTIONS
         const quizData = [
             {
                 category: "Método vs. Metodologia",
-                question: "Uma estudante do 8º período de Psicologia está escrevendo seu TCC e descreve a aplicação de questionários online e entrevistas semiestruturadas. Esse procedimento prático de coleta é considerado:",
-                context: "Atenção à diferença entre o 'estudo dos procedimentos' e o 'procedimento em si'.",
+                question: "Uma estudante de Psicologia descreve a aplicação de questionários online e entrevistas no seu projeto de TCC. Esse procedimento prático de coleta é considerado:",
+                context: "Livro UFRGS (p. 12-13): Método é o procedimento prático; Metodologia é a justificativa epistemológica do caminho.",
                 options: [
-                    { text: "A Metodologia da pesquisa.", correct: false, explanation: "Metodologia é a organização teórica e justificativa do conjunto de caminhos, não apenas a técnica aplicada." },
-                    { text: "O Método utilizado.", correct: true, explanation: "Exato! O método é o caminho prático ou procedimento concreto utilizado para alcançar o objetivo." },
-                    { text: "O Conhecimento empírico e imutável.", correct: false, explanation: "Conhecimento científico é sistemático e revisável, e a aplicação do teste é o método." },
-                    { text: "A Variável Independente.", correct: false, explanation: "Isso se refere aos procedimentos de coleta, não a uma variável de um experimento." }
+                    { text: "A Metodologia da pesquisa.", correct: false, explanation: "Metodologia é o estudo/justificativa dos caminhos teóricos, não apenas o procedimento prático." },
+                    { text: "O Método utilizado.", correct: true, explanation: "Correto! O método é o caminho ou procedimento prático utilizado para alcançar o objetivo." },
+                    { text: "O Conhecimento empírico e imutável.", correct: false, explanation: "A aplicação de testes é um método científico, não um conhecimento do senso comum." },
+                    { text: "A Variável Independente.", correct: false, explanation: "Trata-se de um procedimento de coleta de dados, não de uma variável experimental." }
                 ]
             },
             {
-                category: "Características do Conhecimento Científico",
-                question: "Qual das seguintes afirmações sobre o Conhecimento Científico na Psicologia está CORRETA?",
-                context: "Lembre-se de como a ciência lida com verdades e descobertas anteriores.",
+                category: "Conhecimento Científico",
+                question: "De acordo com o material de Metodologia, qual das alternativas expressa uma característica REAL do Conhecimento Científico?",
+                context: "Livro UFRGS (p. 14, 24): O conhecimento científico se diferencia dos dogmas e do senso comum.",
                 options: [
-                    { text: "É uma verdade final e absoluta que não pode ser alterada por novas pesquisas.", correct: false, explanation: "O conhecimento científico NUNCA é verdade final. Ele é modificável perante novas evidências." },
-                    { text: "Depende exclusivamente da opinião do pesquisador e de sua intuição.", correct: false, explanation: "O conhecimento científico é sistemático e fundamentado em evidências, não apenas em opiniões." },
-                    { text: "É acumulativo (aproveita saberes anteriores) e não é uma verdade final.", correct: true, explanation: "Perfeito! Ele segue etapas sistemáticas, constrói sobre estudos prévios e pode ser questionado." },
-                    { text: "Dispensa procedimentos sistemáticos quando o pesquisador tem muita experiência.", correct: false, explanation: "Mesmo pesquisadores experientes precisam seguir procedimentos sistemáticos rígidos." }
+                    { text: "É uma verdade final e absoluta que não admite questionamentos.", correct: false, explanation: "O conhecimento científico NUNCA é verdade final. Ele é sempre provisório e falível." },
+                    { text: "Depende apenas da intuição e das opiniões pessoais do pesquisador.", correct: false, explanation: "O conhecimento científico baseia-se em procedimentos sistemáticos e evidências." },
+                    { text: "É sistemático, acumulativo e contingente (passível de modificação).", correct: true, explanation: "Perfeito! Ele segue etapas metódicas, aproveita estudos anteriores e é revisável." },
+                    { text: "Dispensa testes de verificação e a publicação em domínio público.", correct: false, explanation: "A verificabilidade e o domínio público são pilares do conhecimento científico." }
                 ]
             },
             {
-                category: "Identificação de Variáveis",
-                question: "Um psicólogo investiga se a 'técnica de relaxamento muscular' diminui o 'nível de cortisol' (hormônio do estresse) em pacientes. Nesse estudo, a 'técnica de relaxamento' é a:",
-                context: "Pergunte-se: O que está sendo manipulado ou testado para ver seu efeito?",
+                category: "Variáveis de Pesquisa",
+                question: "Um psicólogo investiga se a 'técnica de mindfulness' reduz a 'frequência cardíaca' em pacientes com síndrome do pânico. Nesse estudo, a 'técnica de mindfulness' é a:",
+                context: "Pergunte-se: Qual é o fator que o pesquisador manipula como causa?",
                 options: [
-                    { text: "Variável Dependente (VD)", correct: false, explanation: "O nível de cortisol é a VD (o resultado medido)." },
-                    { text: "Variável Independente (VI)", correct: true, explanation: "Correto! A técnica de relaxamento é a VI, pois é o fator manipulado para verificar se produz alteração." },
-                    { text: "Variável de Controle (VC)", correct: false, explanation: "A técnica é a intervenção principal, não um fator padronizado constante." },
-                    { text: "Subjetividade oculta", correct: false, explanation: "Trata-se do fator manipulado da hipótese, ou seja, a Variável Independente." }
+                    { text: "Variável Dependente (VD)", correct: false, explanation: "A frequência cardíaca é a VD (o efeito medido)." },
+                    { text: "Variável Independente (VI)", correct: true, explanation: "Exato! A técnica de mindfulness é a VI (o fator manipulado/causa investigada)." },
+                    { text: "Variável de Controle (VC)", correct: false, explanation: "A intervenção não é uma variável padronizada constante, e sim o estímulo manipulado." },
+                    { text: "Metanálise conceitual", correct: false, explanation: "Trata-se da VI em um experimento clínico." }
                 ]
             },
             {
-                category: "Identificação de Variáveis",
-                question: "No mesmo estudo anterior (relaxamento vs. cortisol), a medição da quantidade de cortisol no sangue é a:",
-                context: "O que o pesquisador está medindo/avaliando como efeito?",
+                category: "Variáveis de Pesquisa",
+                question: "No mesmo estudo (mindfulness vs. frequência cardíaca), a medição dos batimentos cardíacos é a:",
+                context: "Pergunte-se: O que está sendo observado ou medido como resposta?",
                 options: [
-                    { text: "Variável Independente (VI)", correct: false, explanation: "A intervenção (relaxamento) é a VI." },
-                    { text: "Variável Dependente (VD)", correct: true, explanation: "Exato! A taxa de cortisol é a VD pois é a resposta observada/medida para checar o efeito." },
-                    { text: "Variável de Controle (VC)", correct: false, explanation: "Fatores padronizados da sala/horário são as VC." },
-                    { text: "Metanálise conceitual", correct: false, explanation: "Trata-se da mensuração do efeito, que é a Variável Dependente." }
+                    { text: "Variável Independente (VI)", correct: false, explanation: "A intervenção (mindfulness) é a VI." },
+                    { text: "Variável Dependente (VD)", correct: true, explanation: "Correto! A frequência cardíaca é a VD pois é a resposta/resultado medido." },
+                    { text: "Variável de Controle (VC)", correct: false, explanation: "Fatores mantidos constantes (ex: temperatura da sala) seriam as VCs." },
+                    { text: "Citação direta", correct: false, explanation: "Trata-se do resultado mensurado do experimento." }
+                ]
+            },
+            {
+                category: "Tipos de Pesquisa",
+                question: "Uma pesquisa em Psicologia que realiza entrevistas em profundidade para compreender os significados que mães atípicas atribuem à ansiedade é classificada quanto à abordagem como:",
+                context: "Livro UFRGS (p. 31): Foco na compreensão de significados e motivações profundas.",
+                options: [
+                    { text: "Pesquisa Quantitativa", correct: false, explanation: "A pesquisa quantitativa foca em métricas numéricas e estatísticas." },
+                    { text: "Pesquisa Qualitativa", correct: true, explanation: "Exato! A pesquisa qualitativa busca compreender significados, percepções e vivências." },
+                    { text: "Pesquisa Metanalítica", correct: false, explanation: "Metanálise combina dados numéricos estatísticos de vários estudos." },
+                    { text: "Pesquisa Ex-post-facto estrita", correct: false, explanation: "A classificação da abordagem principal de compreensão do significado é Qualitativa." }
+                ]
+            },
+            {
+                category: "Escrita Científica",
+                question: "No texto acadêmico, a menção '(Silva, 2020)' feita no meio do parágrafo é chamada de _____, enquanto o detalhamento da obra ao final do trabalho é a _____.",
+                context: "A ausência da indicação no texto pode se configurar como plágio.",
+                options: [
+                    { text: "Referência; Citação", correct: false, explanation: "Está invertido. Citação é no texto, Referência é no final." },
+                    { text: "Citação; Referência", correct: true, explanation: "Correto! A citação indica a origem no texto, e a referência traz a ficha completa no final." },
+                    { text: "Metanálise; Metodologia", correct: false, explanation: "Esses são termos de procedimentos de pesquisa." },
+                    { text: "Variável Independente; Dependente", correct: false, explanation: "Esses são conceitos de delineamento experimental." }
                 ]
             }
         ];
 
-        // 2. VARIABLE LAB CASES
         const variableCases = [
             {
-                title: "1. Terapia Online vs. Presencial no Transtorno de Ansiedade",
-                description: "Um pesquisador quer testar se a modalidade de atendimento (Online vs. Presencial) interfere na redução de sintomas de ansiedade (medidos pelo inventário Beck). Ele manteve o mesmo número de sessões (12 semanas) e a mesma abordagem teórica (TCC) para todos os participantes.",
+                title: "1. Terapia Cognitivo-Comportamental Online vs. Presencial",
+                description: "Um psicólogo avalia se a modalidade de atendimento (Online vs. Presencial) produz diferença na redução de sintomas de ansiedade (medidos pela escala Beck). Ele mantém 12 sessões e a mesma abordagem para todos os participantes.",
                 options: [
                     "Modalidade de Atendimento (Online vs. Presencial)",
                     "Nível de Sintomas de Ansiedade (Escala Beck)",
-                    "Duração (12 semanas) e Abordagem Teórica (TCC)",
+                    "Número de Sessões (12) e Abordagem Teórica",
                     "Idade média dos participantes"
                 ],
                 correctVI: "Modalidade de Atendimento (Online vs. Presencial)",
                 correctVD: "Nível de Sintomas de Ansiedade (Escala Beck)",
-                correctVC: "Duração (12 semanas) e Abordagem Teórica (TCC)"
+                correctVC: "Número de Sessões (12) e Abordagem Teórica"
             },
             {
                 title: "2. Privação de Sono e Atenção Sustentada",
-                description: "Em um experimento de laboratório, psicólogos comparam o tempo de reação em um teste de atenção entre dois grupos: um grupo dormiu 8 horas e o outro ficou 24 horas acordado. O teste foi aplicado no mesmo computador e em ambiente com iluminação padronizada.",
+                description: "Em um experimento de laboratório, psicólogos comparam o tempo de reação em um teste de atenção entre dois grupos: um dormiu 8 horas e o outro ficou 24 horas acordado. O teste foi feito no mesmo computador e com a mesma iluminação da sala.",
                 options: [
-                    "Horas de sono / Privação de sono (8h vs 24h)",
+                    "Horas de sono (8h vs 24h acordado)",
                     "Tempo de reação no teste de atenção",
-                    "Computador utilizado e Iluminação da sala",
-                    "Nível de cafeína ingerido"
+                    "Mesmo Computador e mesma Iluminação da sala",
+                    "Consumo de café no dia anterior"
                 ],
-                correctVI: "Horas de sono / Privação de sono (8h vs 24h)",
+                correctVI: "Horas de sono (8h vs 24h acordado)",
                 correctVD: "Tempo de reação no teste de atenção",
-                correctVC: "Computador utilizado e Iluminação da sala"
+                correctVC: "Mesmo Computador e mesma Iluminação da sala"
             },
             {
-                title: "3. Musicoterapia em Sala de Espera de Odontopediatria",
-                description: "Pesquisadores avaliaram a frequência cardíaca de crianças na sala de espera ao expô-las a dois cenários: ambiente com música clássica suave ou ambiente sem som. A temperatura da sala e o tempo de espera (15 minutos) foram mantidos iguais.",
+                title: "3. Musicoterapia em Odontopediatria",
+                description: "Pesquisadores avaliaram a frequência cardíaca de crianças na sala de espera expostas a dois cenários: ambiente com música clássica ou sem som. A temperatura da sala e o tempo de espera (15 min) foram mantidos iguais.",
                 options: [
-                    "Presença ou ausência de Música Clássica",
+                    "Presença ou Ausência de Música Clássica",
                     "Frequência cardíaca da criança",
                     "Temperatura da sala e tempo de espera (15 min)",
-                    "Grito das crianças"
+                    "Idade do dentista"
                 ],
-                correctVI: "Presença ou ausência de Música Clássica",
+                correctVI: "Presença ou Ausência de Música Clássica",
                 correctVD: "Frequência cardíaca da criança",
                 correctVC: "Temperatura da sala e tempo de espera (15 min)"
             },
             {
-                title: "4. Treino de Habilidades Sociais em Universitários",
-                description: "Investigou-se se um programa de treinamento em assertividade aumenta a pontuação de autoeficácia social em jovens. Todos os participantes responderam ao mesmo questionário pré e pós-teste nas mesmas condições de aplicação.",
+                title: "4. Treinamento de Assertividade em Universitários",
+                description: "Investigou-se se um programa de treino em assertividade aumenta a pontuação de autoeficácia social. Todos os alunos responderam ao mesmo questionário padronizado nas mesmas condições de sala.",
                 options: [
-                    "Programa de treinamento em assertividade",
+                    "Programa de treino em assertividade",
                     "Pontuação de autoeficácia social",
-                    "Questionário utilizado e condições de aplicação",
-                    "Nota da prova de Psicologia"
+                    "Questionário padronizado e condições de aplicação",
+                    "Semestre do curso"
                 ],
-                correctVI: "Programa de treinamento em assertividade",
+                correctVI: "Programa de treino em assertividade",
                 correctVD: "Pontuação de autoeficácia social",
-                correctVC: "Questionário utilizado e condições de aplicação"
+                correctVC: "Questionário padronizado e condições de aplicação"
             }
         ];
 
-        // FLASHCARDS DATA
         const flashcardsData = [
             {
                 category: "Método vs. Metodologia",
                 title: "Método",
-                backTitle: "Caminho / Procedimento",
-                backContent: "<strong>O que é:</strong> O procedimento ou instrumento concreto utilizado para alcançar o objetivo.<br><br><strong>Exemplo:</strong> Aplicar um questionário de ansiedade STAI em 50 alunos."
+                backTitle: "Procedimento Prático",
+                backContent: "<strong>O que é:</strong> O caminho ou procedimento técnico adotado para alcançar um objetivo específico.<br><br><strong>Exemplo na Psicologia:</strong> Aplicar o questionário de ansiedade STAI em 60 universitários."
             },
             {
                 category: "Método vs. Metodologia",
                 title: "Metodologia",
-                backTitle: "Estudo dos Caminhos",
-                backContent: "<strong>O que é:</strong> O campo que estuda, organiza e justifica a escolha dos métodos e caminhos da pesquisa.<br><br><strong>Diferença-chave:</strong> Método é o 'como fez'; Metodologia é o 'por que e como se fundamentam essas escolhas'."
+                backTitle: "Estudo Epistemológico do Caminho",
+                backContent: "<strong>O que é:</strong> O estudo, organização e justificativa teórica do conjunto de métodos escolhidos (Minayo, 2007).<br><br><strong>Diferença:</strong> Método é o 'como fez'; Metodologia é o 'por que e como se justificam essas escolhas'."
             },
             {
                 category: "Variáveis",
                 title: "Variável Independente (VI)",
                 backTitle: "A Causa / Fator Manipulado",
-                backContent: "<strong>O que é:</strong> O fator que o pesquisador manipula ou considera como CAUSA que produz efeito.<br><br><strong>Pergunta:</strong> 'O que está sendo modificado/comparado?'<br><strong>Exemplo:</strong> Horas de sono (5h vs 8h)."
+                backContent: "<strong>O que é:</strong> O fator que o pesquisador manipula ou considera como causa para verificar o efeito.<br><br><strong>Pergunta:</strong> 'O que está sendo modificado/comparado?'<br><strong>Exemplo:</strong> Horas de sono (5h vs 8h)."
             },
             {
                 category: "Variáveis",
                 title: "Variável Dependente (VD)",
-                backTitle: "O Efeito / O Resultado Medido",
-                backContent: "<strong>O que é:</strong> A resposta ou comportamento que o pesquisador deseja medir/observar. Sofre efeito da VI.<br><br><strong>Pergunta:</strong> 'O que está sendo medido?'<br><strong>Exemplo:</strong> Desempenho no teste de memória."
+                backTitle: "O Efeito / Resultado Medido",
+                backContent: "<strong>O que é:</strong> O comportamento ou resposta medido para verificar o efeito da VI.<br><br><strong>Pergunta:</strong> 'O que está sendo avaliado/medido?'<br><strong>Exemplo:</strong> Desempenho no teste de memória."
             },
             {
                 category: "Variáveis",
                 title: "Variável de Controle (VC)",
                 backTitle: "Fatores Padronizados",
-                backContent: "<strong>O que é:</strong> Variáveis mantidas constantes para não interferirem no resultado final.<br><br><strong>Exemplo:</strong> Aplicar a prova no mesmo horário, mesma iluminação e com o mesmo tempo para todos."
+                backContent: "<strong>O que é:</strong> Fatores mantidos constantes pelo pesquisador para evitar interferências estranhas nos resultados.<br><br><strong>Exemplo:</strong> Horário da prova, iluminação da sala e tipo de tarefa."
             },
             {
                 category: "Tipos de Pesquisa",
                 title: "Pesquisa Quantitativa",
-                backTitle: "Mensuração & Números",
-                backContent: "<strong>Foco:</strong> Mensurar dados, estatísticas, pontuações.<br><br><strong>Perguntas-chave:</strong> <em>Quanto? Quantos? Qual a frequência?</em><br><strong>Exemplo:</strong> Escore numérico de depressão numa escala de 0 a 40."
+                backTitle: "Mensuração & Estatística",
+                backContent: "<strong>Foco:</strong> Mensurar dados numéricos, estatística e objetividade.<br><br><strong>Perguntas:</strong> <em>Quanto? Quantos? Qual a frequência?</em><br><strong>Exemplo:</strong> Escores numéricos de depressão numa escala de 0 a 40."
             },
             {
                 category: "Tipos de Pesquisa",
                 title: "Pesquisa Qualitativa",
-                backTitle: "Significados & Experiências",
-                backContent: "<strong>Foco:</strong> Compreender a fundo vivências, sentidos e percepções.<br><br><strong>Perguntas-chave:</strong> <em>Como? Por quê? Qual o significado?</em><br><strong>Exemplo:</strong> Análise de conteúdo das falas em uma entrevista com mães atípicas."
+                backTitle: "Significados & Vivências",
+                backContent: "<strong>Foco:</strong> Compreender motivações, percepções e processos sociais (Minayo).<br><br><strong>Perguntas:</strong> <em>Como? Por quê? Qual o sentido?</em><br><strong>Exemplo:</strong> Análise de conteúdo das falas em entrevistas."
             },
             {
-                category: "Escrita & Síntese",
+                category: "Síntese de Dados",
                 title: "Metanálise",
                 backTitle: "A Análise das Análises",
-                backContent: "<strong>O que é:</strong> Procedimento estatístico que combina os resultados numéricos de MÚLTIPLAS pesquisas sobre o mesmo assunto para chegar a uma conclusão mais robusta.<br><br><strong>Exemplo:</strong> Juntar 30 estudos sobre o efeito da fluoxetina."
+                backContent: "<strong>O que é:</strong> Procedimento estatístico que combina os resultados numéricos de MÚLTIPLAS pesquisas sobre uma mesma questão para obter conclusões mais robustas."
+            }
+        ];
+
+        // TARGET DEFINITION FOR ARCADE GAME
+        const arcadeTargets = [
+            {
+                type: "VI",
+                title: "Variável Independente (VI)",
+                explanation: "A VI é o fator manipulado/considerado pelo pesquisador como causa.",
+                correctItems: [
+                    { text: "Horas de Sono", exp: "Correto! É a causa manipulada (ex: 5h vs 8h)." },
+                    { text: "Técnica Mindfulness", exp: "Correto! É a intervenção testada como causa." },
+                    { text: "Modalidade Terapia", exp: "Correto! Comparar Online vs. Presencial é a VI." },
+                    { text: "Dose de Medicação", exp: "Correto! O miligramagem fornecido é a VI." }
+                ],
+                wrongItems: [
+                    { text: "Escore de Memória", exp: "Incorreto! A memória é a Variável Dependente (resultado medido)." },
+                    { text: "Taxa de Cortisol", exp: "Incorreto! O cortisol é o resultado medido (VD)." },
+                    { text: "Iluminação da Sala", exp: "Incorreto! Iluminação padronizada é Variável de Controle." },
+                    { text: "Pontuação Beck", exp: "Incorreto! A pontuação da escala é a Variável Dependente." }
+                ]
+            },
+            {
+                type: "VD",
+                title: "Variável Dependente (VD)",
+                explanation: "A VD é a resposta/resultado observado ou medido pelo pesquisador.",
+                correctItems: [
+                    { text: "Desempenho da Prova", exp: "Correto! É a pontuação medida como efeito." },
+                    { text: "Nível de Ansiedade", exp: "Correto! É a resposta medida pela escala." },
+                    { text: "Tempo de Reação", exp: "Correto! É o tempo em ms medido como resposta." },
+                    { text: "Frequência Cardíaca", exp: "Correto! Dado fisiológico medido como efeito." }
+                ],
+                wrongItems: [
+                    { text: "Dose de Cafeína", exp: "Incorreto! A dose de cafeína fornecida é a VI." },
+                    { text: "Uso de Música Suave", exp: "Incorreto! A presença de música é a VI." },
+                    { text: "Horário Padronizado", exp: "Incorreto! O horário constante é Variável de Controle." },
+                    { text: "Tipo de Computador", exp: "Incorreto! A mesma máquina para todos é Variável de Controle." }
+                ]
+            },
+            {
+                type: "VC",
+                title: "Variável de Controle (VC)",
+                explanation: "A VC são os fatores mantidos constantes para evitar interferências estranhas.",
+                correctItems: [
+                    { text: "Mesmo Horário Teste", exp: "Correto! Padroniza o ritmo circadiano dos sujeitos." },
+                    { text: "Temperatura da Sala", exp: "Correto! Evita desconforto térmico no teste." },
+                    { text: "Mesma Iluminação", exp: "Correto! Garante igualdade de ambiente." },
+                    { text: "Mesma Idade Média", exp: "Correto! Controla o viés de faixa etária." }
+                ],
+                wrongItems: [
+                    { text: "Privação de Sono", exp: "Incorreto! A variação de sono é a VI." },
+                    { text: "Escore de Depressão", exp: "Incorreto! A pontuação medida é a VD." },
+                    { text: "Método Clínico", exp: "Incorreto! O método é o procedimento de estudo." },
+                    { text: "Entrevistas Gravadas", exp: "Incorreto! Trata-se da coleta de dados de pesquisa qual." }
+                ]
+            },
+            {
+                type: "CONCEITO",
+                title: "Conhecimento Científico & Metodologia",
+                explanation: "O conhecimento científico é sistemático, acumulativo, verificável e provisório.",
+                correctItems: [
+                    { text: "Sistemático & Acumulativo", exp: "Correto! Segue etapas e aproveita estudos anteriores." },
+                    { text: "Provisório & Falível", exp: "Correto! Pode ser revisado diante de novas evidências." },
+                    { text: "Método = Procedimento", exp: "Correto! Método é o caminho prático adotado." },
+                    { text: "Citação = Corpo do Texto", exp: "Correto! A citação vai no texto (Silva, 2020)." }
+                ],
+                wrongItems: [
+                    { text: "Verdade Final Absoluta", exp: "Incorreto! A ciência jamais é um dogma definitivo." },
+                    { text: "Senso Comum Acrítico", exp: "Incorreto! O senso comum é espontâneo e acrítico." },
+                    { text: "Impossível de Falsear", exp: "Incorreto! A ciência aceita ser testada e revisada." },
+                    { text: "Eliminação total Subjetividade", exp: "Incorreto! O livro aponta ser impossível eliminar 100% a subjetividade." }
+                ]
             }
         ];
 
@@ -599,91 +787,15 @@
         let currentFlashcardIndex = 0;
         let isFlipped = false;
 
-        // MAXIMUM CALCULATED SCORE FOR ARCADE (60 pts per target * 4 targets = 240 pts)
         const MAX_ARCADE_SCORE = 240;
 
-        // ARCADE TARGETS DATA DEFINITION
-        const arcadeTargets = [
-            {
-                type: "VI",
-                title: "Variável Independente (VI)",
-                description: "Fator manipulado / investigado como causa",
-                explanation: "A Variável Independente é o fator investigado ou manipulado pelo pesquisador para verificar se produz alteração sobre o fenômeno.",
-                correctItems: [
-                    { text: "Horas de Sono", exp: "Correto! É a VI que é manipulada (ex: comparar 5h vs 8h) para ver o efeito." },
-                    { text: "Técnica de Relaxamento", exp: "Correto! É o procedimento introduzido pelo psicólogo como causa." },
-                    { text: "Modalidade de Terapia", exp: "Correto! Comparar Online vs. Presencial é a VI da pesquisa." },
-                    { text: "Dose de Medicação", exp: "Correto! O número de miligramas é a causa que o pesquisador manipula." }
-                ],
-                wrongItems: [
-                    { text: "Desempenho da Memória", exp: "Incorreto! A memória é a Variável Dependente (resultado medido)." },
-                    { text: "Taxa de Cortisol", exp: "Incorreto! O cortisol é medido para checar o efeito (Variável Dependente)." },
-                    { text: "Iluminação da Sala", exp: "Incorreto! A iluminação mantida constante é uma Variável de Controle." },
-                    { text: "Pontuação Beck", exp: "Incorreto! A pontuação da escala é o resultado observado (VD)." }
-                ]
-            },
-            {
-                type: "VD",
-                title: "Variável Dependente (VD)",
-                description: "O resultado que é medido ou observado",
-                explanation: "A Variável Dependente é a resposta ou comportamento que o pesquisador mede para verificar a influência da VI.",
-                correctItems: [
-                    { text: "Desempenho na Prova", exp: "Correto! É a pontuação medida como resultado do estudo." },
-                    { text: "Nível de Ansiedade", exp: "Correto! É a resposta observada/avaliada pelo instrumento." },
-                    { text: "Tempo de Reação", exp: "Correto! É o tempo em milissegundos medido após o estímulo." },
-                    { text: "Frequência Cardíaca", exp: "Correto! É o dado fisiológico medido como efeito." }
-                ],
-                wrongItems: [
-                    { text: "Quantidade de Cafeína", exp: "Incorreto! A dose de cafeína fornecida é a Variável Independente." },
-                    { text: "Uso de Música Suave", exp: "Incorreto! A presença/ausência de música é a Variável Independente." },
-                    { text: "Mesmo Horário do Teste", exp: "Incorreto! O horário padronizado é uma Variável de Controle." },
-                    { text: "Tipo de Computador", exp: "Incorreto! Usar a mesma máquina para todos é Variável de Controle." }
-                ]
-            },
-            {
-                type: "VC",
-                title: "Variável de Controle (VC)",
-                description: "Fator mantido constante e padronizado",
-                explanation: "A Variável de Controle são todos os fatores que o pesquisador mantêm idênticos para evitar interferências.",
-                correctItems: [
-                    { text: "Mesmo Horário do Teste", exp: "Correto! Padronizar o horário impede interferência do cansaço biológico." },
-                    { text: "Temperatura da Sala", exp: "Correto! Manter a temperatura constante evita desconforto nos participantes." },
-                    { text: "Mesma Iluminação", exp: "Correto! Garante que as condições visuais sejam iguais para todos." },
-                    { text: "Mesma Idade Média", exp: "Correto! Parear os grupos por faixa etária controla viés de idade." }
-                ],
-                wrongItems: [
-                    { text: "Privação de Sono", exp: "Incorreto! A variação de sono (8h vs 24h) é a Variável Independente." },
-                    { text: "Escore de Depressão", exp: "Incorreto! O resultado numérico medido é a Variável Dependente." },
-                    { text: "Método Clínico", exp: "Incorreto! O método é o procedimento de investigação." },
-                    { text: "Entrevistas Narrativas", exp: "Incorreto! Trata-se da coleta de dados de uma pesquisa qualitativa." }
-                ]
-            },
-            {
-                type: "CONCEITO",
-                title: "Conhecimento Científico & Metodologia",
-                description: "Princípios do saber científico (Minayo / Fonseca)",
-                explanation: "O conhecimento científico é sistemático, acumulativo, verificável e provisório (passível de revisão).",
-                correctItems: [
-                    { text: "Sistemático & Acumulativo", exp: "Correto! Segue etapas ordenadas e aproveita descobertas anteriores." },
-                    { text: "Provisório & Falível", exp: "Correto! Não é verdade final; pode ser revisado com novas evidências." },
-                    { text: "Método = Caminho", exp: "Correto! Método é o procedimento prático concreto adotado." },
-                    { text: "Citação = Corpo do Texto", exp: "Correto! A citação vai no texto (Silva, 2020) para indicar a fonte." }
-                ],
-                wrongItems: [
-                    { text: "Verdade Absoluta e Final", exp: "Incorreto! A ciência jamais se considera um dogma insubstituível." },
-                    { text: "Senso Comum Acrítico", exp: "Incorreto! O senso comum é espontâneo e baseado em opiniões." },
-                    { text: "Impossível de Falsear", exp: "Incorreto! O conhecimento científico deve aceitar ser testado e questionado." },
-                    { text: "Eliminação total de Subjetividade", exp: "Incorreto! A literatura ressalta que é impossível eliminar 100% a subjetividade." }
-                ]
-            }
-        ];
-
+        // ARCADE ENGINE VARIABLES
         let arcadeCanvas, ctx;
         let gameLoopReq = null;
+        let lastFrameTime = 0;
         let audioCtx = null;
         let isSoundEnabled = true;
 
-        // Arcade Game State
         let arcadeState = {
             activeTargetIndex: 0,
             score: 0,
@@ -691,17 +803,16 @@
             lives: 3,
             basketX: 0,
             basketWidth: 90,
-            basketHeight: 20,
+            basketHeight: 18,
             bubbles: [],
             particles: [],
             isMovingLeft: false,
             isMovingRight: false,
             isRunning: false,
-            spawnTimer: 0,
-            touchX: null
+            spawnTimer: 0
         };
 
-        // Sound Effects Helper
+        // SOUND SYNTHESIZER
         function playSound(type) {
             if (!isSoundEnabled) return;
             try {
@@ -718,28 +829,28 @@
 
                 if (type === 'hit') {
                     osc.type = 'sine';
-                    osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
-                    osc.frequency.exponentialRampToValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
+                    osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(659.25, audioCtx.currentTime + 0.1);
                     gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
                     gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.12);
                     osc.start();
                     osc.stop(audioCtx.currentTime + 0.12);
                 } else if (type === 'wrong') {
                     osc.type = 'sawtooth';
-                    osc.frequency.setValueAtTime(220, audioCtx.currentTime); // A3
-                    osc.frequency.exponentialRampToValueAtTime(130, audioCtx.currentTime + 0.2); // C3
-                    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.22);
+                    osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(130, audioCtx.currentTime + 0.18);
+                    gain.gain.setValueAtTime(0.18, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
                     osc.start();
-                    osc.stop(audioCtx.currentTime + 0.22);
+                    osc.stop(audioCtx.currentTime + 0.2);
                 } else if (type === 'level') {
                     osc.type = 'triangle';
                     osc.frequency.setValueAtTime(440, audioCtx.currentTime);
-                    osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.3);
+                    osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.25);
                     gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
                     osc.start();
-                    osc.stop(audioCtx.currentTime + 0.35);
+                    osc.stop(audioCtx.currentTime + 0.3);
                 }
             } catch(e) {}
         }
@@ -747,34 +858,41 @@
         function toggleSound() {
             isSoundEnabled = !isSoundEnabled;
             const btn = document.getElementById('btn-sound');
-            const icon = document.getElementById('sound-icon');
             if (isSoundEnabled) {
-                btn.className = "bg-slate-100 hover:bg-slate-200 border border-slate-300 px-3 py-1 rounded-xl text-xs font-bold text-slate-700 flex items-center gap-1";
+                btn.className = "bg-slate-100 hover:bg-slate-200 border border-slate-300 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700 flex items-center gap-1";
                 btn.innerHTML = `<span>🔊</span> Som: ON`;
             } else {
-                btn.className = "bg-rose-50 border border-rose-200 px-3 py-1 rounded-xl text-xs font-bold text-rose-700 flex items-center gap-1";
+                btn.className = "bg-rose-50 border border-rose-200 px-3 py-1.5 rounded-xl text-xs font-bold text-rose-700 flex items-center gap-1";
                 btn.innerHTML = `<span>🔇</span> Som: OFF`;
             }
         }
 
-        // Initialize Arcade Elements
+        // ARCADE INITIALIZATION
         function initArcade() {
             arcadeCanvas = document.getElementById('gameCanvas');
             if (!arcadeCanvas) return;
-            ctx = arcadeCanvas.getContext('2d');
+            ctx = arcadeCanvas.getContext('2d', { alpha: false });
             resizeCanvas();
             window.addEventListener('resize', resizeCanvas);
 
-            // Controls listeners for Canvas dragging
             const container = document.getElementById('canvas-container');
-            container.addEventListener('pointermove', (e) => {
+            
+            // Mobile Touch / Dragging Controls
+            const handleTouch = (e) => {
                 if (!arcadeState.isRunning) return;
                 const rect = arcadeCanvas.getBoundingClientRect();
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
                 const scaleX = arcadeCanvas.width / rect.width;
-                arcadeState.basketX = (e.clientX - rect.left) * scaleX - arcadeState.basketWidth / 2;
+                arcadeState.basketX = (clientX - rect.left) * scaleX - arcadeState.basketWidth / 2;
+            };
+
+            container.addEventListener('touchmove', handleTouch, { passive: true });
+            container.addEventListener('touchstart', handleTouch, { passive: true });
+            container.addEventListener('mousemove', (e) => {
+                if (e.buttons === 1) handleTouch(e);
             });
 
-            // Keyboard Arrow Listeners
+            // Keyboard Listeners
             window.addEventListener('keydown', (e) => {
                 if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') arcadeState.isMovingLeft = true;
                 if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') arcadeState.isMovingRight = true;
@@ -790,7 +908,7 @@
             const container = document.getElementById('canvas-container');
             arcadeCanvas.width = container.clientWidth;
             arcadeCanvas.height = container.clientHeight;
-            arcadeState.basketWidth = Math.max(90, arcadeCanvas.width * 0.22);
+            arcadeState.basketWidth = Math.max(85, arcadeCanvas.width * 0.24);
         }
 
         function startMoveLeft() { arcadeState.isMovingLeft = true; }
@@ -814,8 +932,9 @@
             document.getElementById('arcade-explanation-toast').classList.add('hidden');
             updateArcadeUI();
 
+            lastFrameTime = performance.now();
             if (gameLoopReq) cancelAnimationFrame(gameLoopReq);
-            arcadeLoop();
+            arcadeLoop(lastFrameTime);
         }
 
         function updateArcadeUI() {
@@ -837,7 +956,7 @@
                 item = currentTarget.wrongItems[Math.floor(Math.random() * currentTarget.wrongItems.length)];
             }
 
-            const radius = Math.max(38, Math.min(55, arcadeCanvas.width * 0.1));
+            const radius = Math.max(34, Math.min(48, arcadeCanvas.width * 0.11));
             const x = radius + Math.random() * (arcadeCanvas.width - radius * 2);
 
             arcadeState.bubbles.push({
@@ -847,102 +966,98 @@
                 text: item.text,
                 exp: item.exp,
                 isCorrect: isCorrect,
-                speed: 1.2 + Math.random() * 0.6 // Slow relaxed fall speed
+                speed: 1.1 + Math.random() * 0.5
             });
         }
 
         function showExplanationToast(text, isCorrect, exp) {
             const toast = document.getElementById('arcade-explanation-toast');
-            toast.classList.remove('hidden', 'bg-emerald-50', 'bg-rose-50', 'border-emerald-200', 'border-rose-200', 'text-emerald-900', 'text-rose-900');
+            toast.classList.remove('hidden', 'bg-emerald-50', 'bg-rose-50', 'border-emerald-300', 'border-rose-300', 'text-emerald-950', 'text-rose-950');
             
             if (isCorrect) {
-                toast.classList.add('bg-emerald-50', 'border-emerald-200', 'text-emerald-900');
+                toast.classList.add('bg-emerald-50', 'border-emerald-300', 'text-emerald-950');
                 toast.innerHTML = `<strong>✅ ACERTOU!</strong> "${text}" - ${exp}`;
             } else {
-                toast.classList.add('bg-rose-50', 'border-rose-200', 'text-rose-900');
+                toast.classList.add('bg-rose-50', 'border-rose-300', 'text-rose-950');
                 toast.innerHTML = `<strong>❌ ERROU!</strong> "${text}" - ${exp}`;
             }
         }
 
         function createParticles(x, y, color) {
-            for (let i = 0; i < 12; i++) {
+            for (let i = 0; i < 8; i++) {
                 arcadeState.particles.push({
                     x: x,
                     y: y,
-                    vx: (Math.random() - 0.5) * 6,
-                    vy: (Math.random() - 0.5) * 6,
+                    vx: (Math.random() - 0.5) * 5,
+                    vy: (Math.random() - 0.5) * 5,
                     life: 1,
                     color: color
                 });
             }
         }
 
-        function arcadeLoop() {
+        // SMOOTH Delta-Time Frame Loop
+        function arcadeLoop(timestamp) {
             if (!arcadeState.isRunning) return;
 
-            // Move basket with controls
-            const speed = 7;
+            const dt = Math.min(32, timestamp - lastFrameTime) / 16.6; // Normalized scale
+            lastFrameTime = timestamp;
+
+            const speed = 7.5 * dt;
             if (arcadeState.isMovingLeft) arcadeState.basketX -= speed;
             if (arcadeState.isMovingRight) arcadeState.basketX += speed;
             arcadeState.basketX = Math.max(0, Math.min(arcadeCanvas.width - arcadeState.basketWidth, arcadeState.basketX));
 
-            // Clear screen
+            // Clear Screen
             ctx.fillStyle = '#0F172A';
             ctx.fillRect(0, 0, arcadeCanvas.width, arcadeCanvas.height);
 
             // Draw Basket
+            const basketY = arcadeCanvas.height - arcadeState.basketHeight - 12;
             ctx.fillStyle = '#6366F1';
             ctx.beginPath();
-            ctx.roundRect(arcadeState.basketX, arcadeCanvas.height - arcadeState.basketHeight - 10, arcadeState.basketWidth, arcadeState.basketHeight, 10);
-            ctx.fill();
-
-            // Basket rim glow
-            ctx.fillStyle = '#818CF8';
-            ctx.beginPath();
-            ctx.roundRect(arcadeState.basketX + 4, arcadeCanvas.height - arcadeState.basketHeight - 10, arcadeState.basketWidth - 8, 4, 2);
+            ctx.roundRect(arcadeState.basketX, basketY, arcadeState.basketWidth, arcadeState.basketHeight, 8);
             ctx.fill();
 
             // Spawn bubbles
-            arcadeState.spawnTimer++;
-            if (arcadeState.spawnTimer > 110) {
+            arcadeState.spawnTimer += dt;
+            if (arcadeState.spawnTimer > 100) {
                 spawnBubble();
                 arcadeState.spawnTimer = 0;
             }
 
-            // Update & Draw Bubbles
+            // Update & Render Bubbles
             for (let i = arcadeState.bubbles.length - 1; i >= 0; i--) {
                 const b = arcadeState.bubbles[i];
-                b.y += b.speed;
+                b.y += b.speed * dt;
 
-                // Draw Bubble Circle
+                // Draw Bubble
                 ctx.beginPath();
                 ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
-                ctx.fillStyle = b.isCorrect ? 'rgba(79, 70, 229, 0.9)' : 'rgba(225, 29, 72, 0.9)';
+                ctx.fillStyle = b.isCorrect ? 'rgba(79, 70, 229, 0.95)' : 'rgba(225, 29, 72, 0.95)';
                 ctx.fill();
                 ctx.strokeStyle = '#FFFFFF';
                 ctx.lineWidth = 2;
                 ctx.stroke();
 
-                // Draw Text inside Bubble (wrapping)
+                // Draw Text
                 ctx.fillStyle = '#FFFFFF';
-                ctx.font = 'bold 12px Inter, sans-serif';
+                ctx.font = 'bold 11px Inter, sans-serif';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
 
                 const words = b.text.split(' ');
                 if (words.length > 2) {
                     const mid = Math.ceil(words.length / 2);
-                    ctx.fillText(words.slice(0, mid).join(' '), b.x, b.y - 7);
-                    ctx.fillText(words.slice(mid).join(' '), b.x, b.y + 7);
+                    ctx.fillText(words.slice(0, mid).join(' '), b.x, b.y - 6);
+                    ctx.fillText(words.slice(mid).join(' '), b.x, b.y + 6);
                 } else {
                     ctx.fillText(b.text, b.x, b.y);
                 }
 
-                // Check Basket Collision
-                const basketY = arcadeCanvas.height - arcadeState.basketHeight - 10;
+                // Basket Collision
                 if (b.y + b.radius >= basketY && b.y - b.radius <= basketY + arcadeState.basketHeight) {
                     if (b.x + b.radius >= arcadeState.basketX && b.x - b.radius <= arcadeState.basketX + arcadeState.basketWidth) {
-                        // Caught!
                         if (b.isCorrect) {
                             arcadeState.score += 15 * arcadeState.combo;
                             arcadeState.combo = Math.min(5, arcadeState.combo + 1);
@@ -950,14 +1065,12 @@
                             playSound('hit');
                             showExplanationToast(b.text, true, b.exp);
 
-                            // Advance Phase check
                             if (arcadeState.score >= (arcadeState.activeTargetIndex + 1) * 60) {
                                 if (arcadeState.activeTargetIndex < arcadeTargets.length - 1) {
                                     arcadeState.activeTargetIndex++;
                                     playSound('level');
                                     confetti({ particleCount: 30, spread: 60, origin: { y: 0.6 } });
                                 } else {
-                                    // Game Complete Victory!
                                     endArcadeGame(true);
                                     return;
                                 }
@@ -980,18 +1093,18 @@
                     }
                 }
 
-                // Remove out of screen
+                // Remove Out of bounds
                 if (b.y - b.radius > arcadeCanvas.height) {
                     arcadeState.bubbles.splice(i, 1);
                 }
             }
 
-            // Update & Draw Particles
+            // Update & Render Particles
             for (let i = arcadeState.particles.length - 1; i >= 0; i--) {
                 const p = arcadeState.particles[i];
-                p.x += p.vx;
-                p.y += p.vy;
-                p.life -= 0.04;
+                p.x += p.vx * dt;
+                p.y += p.vy * dt;
+                p.life -= 0.05 * dt;
                 if (p.life <= 0) {
                     arcadeState.particles.splice(i, 1);
                     continue;
@@ -999,7 +1112,7 @@
                 ctx.fillStyle = p.color;
                 ctx.globalAlpha = p.life;
                 ctx.beginPath();
-                ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+                ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
                 ctx.fill();
                 ctx.globalAlpha = 1.0;
             }
@@ -1029,26 +1142,24 @@
 
             if (isVictory) {
                 title.innerText = "🏆 PARABÉNS! VOCÊ ZEROU O CAÇA!";
-                subtitle.innerText = "Excelente! Você demonstrou domínio completo dos conceitos de Variáveis e Metodologia!";
+                subtitle.innerText = "Excelente! Você demonstrou domínio completo dos conceitos de Metodologia!";
                 confetti({ particleCount: 100, spread: 80, origin: { y: 0.5 } });
             } else {
                 title.innerText = "FIM DE JOGO!";
-                subtitle.innerText = "Revisar as explicações abaixo vai te ajudar a gabaritar a prova de hoje!";
+                subtitle.innerText = "Revise os conceitos do livro abaixo para mandar super bem na prova!";
             }
 
-            // Build summary list of concepts for review
-            let summaryHTML = `<strong class="text-indigo-300 block mb-1">📖 GABARITO & RESUMO DE REVISÃO DA PROVA:</strong>`;
+            let summaryHTML = `<strong class="text-indigo-300 block mb-1">📖 GABARITO & RESUMO DA PROVA:</strong>`;
             arcadeTargets.forEach(target => {
                 summaryHTML += `
-                    <div class="mb-2 pb-1 border-b border-slate-700">
-                        <span class="font-bold text-amber-300 block">${target.title}</span>
+                    <div class="mb-2 pb-1.5 border-b border-slate-700">
+                        <span class="font-extrabold text-amber-300 block">${target.title}</span>
                         <p class="text-slate-300">${target.explanation}</p>
                     </div>
                 `;
             });
             targetSummary.innerHTML = summaryHTML;
 
-            // Sync global score
             score += arcadeState.score;
             document.getElementById('score-display').innerText = score;
         }
@@ -1057,11 +1168,11 @@
         function switchTab(tabName) {
             ['arcade', 'quiz', 'variables', 'flashcards', 'cheatsheet'].forEach(t => {
                 document.getElementById(`section-${t}`).classList.add('hidden');
-                document.getElementById(`tab-${t}`).className = "py-3 px-2 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-1.5 whitespace-nowrap";
+                document.getElementById(`tab-${t}`).className = "py-3 px-3 border-b-2 border-transparent text-slate-600 hover:text-slate-900 flex items-center gap-1.5 whitespace-nowrap";
             });
 
             document.getElementById(`section-${tabName}`).classList.remove('hidden');
-            document.getElementById(`tab-${tabName}`).className = "py-3 px-2 border-b-2 border-indigo-600 text-indigo-600 flex items-center gap-1.5 whitespace-nowrap";
+            document.getElementById(`tab-${tabName}`).className = "py-3 px-3 border-b-2 border-indigo-600 text-indigo-600 flex items-center gap-1.5 whitespace-nowrap";
 
             if (tabName === 'arcade') {
                 if (!arcadeCanvas) initArcade();
@@ -1082,7 +1193,7 @@
             document.getElementById('quiz-context').innerText = q.context;
 
             const feedback = document.getElementById('quiz-feedback');
-            feedback.className = "hidden p-4 rounded-xl text-sm mb-4";
+            feedback.className = "hidden p-4 rounded-xl text-sm font-semibold mb-5";
             feedback.innerHTML = "";
 
             const optionsContainer = document.getElementById('quiz-options');
@@ -1090,8 +1201,8 @@
 
             q.options.forEach((opt, idx) => {
                 const btn = document.createElement('button');
-                btn.className = "w-full text-left p-4 rounded-xl border border-slate-200 bg-white hover:border-indigo-300 hover:bg-slate-50 transition font-medium text-sm text-slate-700 flex items-start gap-3";
-                btn.innerHTML = `<span class="w-6 h-6 rounded-full bg-slate-100 text-slate-500 font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">${String.fromCharCode(65 + idx)}</span><span>${opt.text}</span>`;
+                btn.className = "w-full text-left p-4 rounded-xl border border-slate-200 bg-white hover:border-indigo-300 hover:bg-slate-50 transition font-medium text-xs md:text-sm text-slate-800 flex items-start gap-3 shadow-sm";
+                btn.innerHTML = `<span class="w-6 h-6 rounded-full bg-slate-100 text-slate-700 font-extrabold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">${String.fromCharCode(65 + idx)}</span><span>${opt.text}</span>`;
                 btn.onclick = () => selectQuizOption(idx);
                 optionsContainer.appendChild(btn);
             });
@@ -1109,12 +1220,12 @@
                 buttons[i].disabled = true;
                 if (i === optIdx) {
                     if (selectedOpt.correct) {
-                        buttons[i].className = "w-full text-left p-4 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-900 font-medium text-sm flex items-start gap-3";
+                        buttons[i].className = "w-full text-left p-4 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-950 font-bold text-xs md:text-sm flex items-start gap-3 shadow-sm";
                     } else {
-                        buttons[i].className = "w-full text-left p-4 rounded-xl border-2 border-rose-500 bg-rose-50 text-rose-900 font-medium text-sm flex items-start gap-3";
+                        buttons[i].className = "w-full text-left p-4 rounded-xl border-2 border-rose-500 bg-rose-50 text-rose-950 font-bold text-xs md:text-sm flex items-start gap-3 shadow-sm";
                     }
                 } else if (q.options[i].correct) {
-                    buttons[i].className = "w-full text-left p-4 rounded-xl border-2 border-emerald-300 bg-emerald-50/50 text-emerald-800 font-medium text-sm flex items-start gap-3";
+                    buttons[i].className = "w-full text-left p-4 rounded-xl border-2 border-emerald-400 bg-emerald-50/60 text-emerald-950 font-bold text-xs md:text-sm flex items-start gap-3 shadow-sm";
                 }
             }
 
@@ -1124,11 +1235,11 @@
             if (selectedOpt.correct) {
                 score += 50;
                 correctAnswersCount++;
-                feedback.className = "p-4 rounded-xl text-sm mb-4 bg-emerald-50 border border-emerald-200 text-emerald-900";
+                feedback.className = "p-4 rounded-xl text-xs md:text-sm font-semibold mb-5 bg-emerald-50 border border-emerald-200 text-emerald-950";
                 feedback.innerHTML = `<strong>✅ Excelente!</strong> ${selectedOpt.explanation}`;
                 confetti({ particleCount: 40, spread: 50, origin: { y: 0.7 } });
             } else {
-                feedback.className = "p-4 rounded-xl text-sm mb-4 bg-rose-50 border border-rose-200 text-rose-900";
+                feedback.className = "p-4 rounded-xl text-xs md:text-sm font-semibold mb-5 bg-rose-50 border border-rose-200 text-rose-950";
                 feedback.innerHTML = `<strong>❌ Incorreto.</strong> ${selectedOpt.explanation}`;
             }
 
@@ -1192,33 +1303,33 @@
             const viStatus = document.getElementById('vi-status');
             viStatus.classList.remove('hidden');
             if (userVI === vCase.correctVI) {
-                viStatus.className = "mt-2 text-xs font-semibold text-emerald-600";
-                viStatus.innerText = "✅ Correto! Esta é a VI (fator manipulado).";
+                viStatus.className = "mt-3 text-xs font-bold text-emerald-700";
+                viStatus.innerText = "✅ Correto! Esta é a VI (causa manipulada).";
                 correctCount++;
             } else {
-                viStatus.className = "mt-2 text-xs font-semibold text-rose-600";
+                viStatus.className = "mt-3 text-xs font-bold text-rose-700";
                 viStatus.innerText = `❌ Incorreto. A VI é: ${vCase.correctVI}`;
             }
 
             const vdStatus = document.getElementById('vd-status');
             vdStatus.classList.remove('hidden');
             if (userVD === vCase.correctVD) {
-                vdStatus.className = "mt-2 text-xs font-semibold text-emerald-600";
+                vdStatus.className = "mt-3 text-xs font-bold text-emerald-700";
                 vdStatus.innerText = "✅ Correto! Esta é a VD (resultado medido).";
                 correctCount++;
             } else {
-                vdStatus.className = "mt-2 text-xs font-semibold text-rose-600";
+                vdStatus.className = "mt-3 text-xs font-bold text-rose-700";
                 vdStatus.innerText = `❌ Incorreto. A VD é: ${vCase.correctVD}`;
             }
 
             const vcStatus = document.getElementById('vc-status');
             vcStatus.classList.remove('hidden');
             if (userVC === vCase.correctVC) {
-                vcStatus.className = "mt-2 text-xs font-semibold text-emerald-600";
+                vcStatus.className = "mt-3 text-xs font-bold text-emerald-700";
                 vcStatus.innerText = "✅ Correto! Esta é a VC (fator mantido constante).";
                 correctCount++;
             } else {
-                vcStatus.className = "mt-2 text-xs font-semibold text-rose-600";
+                vcStatus.className = "mt-3 text-xs font-bold text-rose-700";
                 vcStatus.innerText = `❌ Incorreto. A VC é: ${vCase.correctVC}`;
             }
 
